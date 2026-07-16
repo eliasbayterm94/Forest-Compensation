@@ -178,6 +178,28 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <option value="3">Global Account Manager</option>
       </select>
 
+      <div class="two" style="margin-top:18px;">
+        <div>
+          <span class="mini">Región</span>
+          <select id="region">
+            <option value="USA" selected>USA</option>
+            <option value="EU">EU (incl. UK)</option>
+            <option value="AU">AU</option>
+            <option value="MENA">MENA (Dubai)</option>
+          </select>
+        </div>
+        <div>
+          <span class="mini">Horizonte (glide path)</span>
+          <select id="horizonte">
+            <option value="Q3-2026" selected>Q3 2026 (hoy)</option>
+            <option value="Q4-2026">Q4 2026</option>
+            <option value="Q1-2027">Q1 2027</option>
+            <option value="Q2-2027">Q2 2027</option>
+          </select>
+        </div>
+      </div>
+      <div class="note" id="glideNote"></div>
+
       <label>Ingresos (revenue) <span class="val" id="vCum">100%</span></label>
       <div class="two">
         <div><span class="mini">Meta del mes (USD)</span><input type="number" id="revMeta" value="250000" min="0" step="5000"></div>
@@ -287,6 +309,25 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
     </div>
 
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-label">Targets por región — oficiales (jun-2025 → jul-2026)</div>
+      <table class="lots targets">
+        <thead><tr>
+          <th style="width:20%">Región</th>
+          <th>Rot. 3M (d)</th><th>Rot. 6M (d)</th><th>Vejez (d)</th>
+          <th>Mov. mensual (kg)</th><th>Piso X <span id="tgtKlbl">@33%</span> (kg)</th>
+        </tr></thead>
+        <tbody id="tgtBody"></tbody>
+      </table>
+      <div class="rules" style="margin-top:12px;">
+        <b>Justificación por región:</b><br>
+        · <b>USA</b> — rotación se deterioró de 53d a 127d en 12 meses; glide path −15d/trimestre (95d en Q3–Q4 2026 → 85d desde Q1 2027). Liquidar los 19 lotes &gt;150d baja ~38d de golpe.<br>
+        · <b>EU</b> — promedio anual 82d con núcleo sano en 53d; target 75/70 alcanzable limpiando 13 lotes &gt;150d.<br>
+        · <b>AU</b> — rotación ya recuperada (~75d); vejez 144d inflada por la cola &gt;270d (21.5% del kg): target 90 obliga a liquidarla sin ser imposible.<br>
+        · <b>MENA</b> — mejor rotación del grupo (67d); mantener disciplina y limpiar 6 lotes viejos ($61k, el mayor $ en riesgo relativo).
+      </div>
+    </div>
+
     <div class="grid">
       <div class="card">
         <div class="card-label">Piso de vejez (X) — región</div>
@@ -296,7 +337,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <label>Umbral k (% del movimiento) <span class="val" id="rvKVal">33%</span></label>
         <input type="range" id="kPct2" min="10" max="75" value="33" step="1">
         <div class="gmc-box" style="margin-top:14px;"><span class="l">Piso X (kg)</span><span class="n" id="rvX">0</span></div>
-        <div class="note">Ancla: un contenedor de café verde ≈ 19,200 kg (320 sacos × 60 kg). k=33% deja el piso en ≈ un contenedor / ~10 días de cobertura para volumen medio. Baja k para castigar más agresivo la frescura; súbelo para dar holgura.</div>
+        <div class="note"><b>X escala por región</b> (= k% del movimiento mensual), no por un piso fijo. Un contenedor fijo de 19,200 kg sería 336% del movimiento de MENA (vejez nunca aplicaría) pero solo 44% de USA (aplicaría siempre). Con k=33% las 4 regiones quedan hoy por encima del piso — correcto, todas tienen cola &gt;150d. Baja k para castigar más agresivo la frescura; súbelo para dar holgura.</div>
 
         <div class="card-label" style="margin-top:22px;">Metas (del simulador)</div>
         <div class="two">
@@ -359,6 +400,19 @@ const BRK=[
   {min:.46, max:9.99,  base:[.118,.122,.124,.126]}
 ];
 const PW=.6, PR=.2, PV=.2, ACC=2, CAP=1.5, AP=.7, FT=.85, SH=.5, MMIN=.18;
+
+// ── Targets oficiales por región (análisis jun-2025 → jul-2026) ──
+// rot3M/rot6M = target rotación (glide path); vejMeta = target vejez;
+// movMensualKg = base del piso X; *Hoy/invSpot/lotesViejos = snapshot real de la región.
+const REGIONES = {
+  USA:  { label:'USA',           rot3M:95, rot6M:85, vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19 },
+  EU:   { label:'EU (incl. UK)', rot3M:75, rot6M:75, vejMeta:70, movMensualKg:24474, rotHoy:87,  vejHoy:90,  invSpotKg:15102, lotesViejos:13 },
+  AU:   { label:'AU',            rot3M:70, rot6M:70, vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:0  },
+  MENA: { label:'MENA (Dubai)',  rot3M:60, rot6M:60, vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6  }
+};
+const HORIZ_6M = {'Q1-2027':1, 'Q2-2027':1}; // estos horizontes usan target 6M; el resto 3M
+const K_DEFAULT = 0.33;
+const rotTargetFor=(r,hz)=>HORIZ_6M[hz]?REGIONES[r].rot6M:REGIONES[r].rot3M;
 
 function multOld(mg,p){
   if(mg<MMIN) return 0;
@@ -569,7 +623,46 @@ function calc2(){
   return {rotAdj, vejDias:disp.dias, invKg:disp.kg};
 }
 
-function recalc(){ update(); calc2(); }
+// ── Región + glide path ──────────────────────────────────────
+function setPair(aId,bId,val){ const a=$(aId),b=$(bId); if(a)a.value=val; if(b)b.value=val; }
+function applyRegion(resetReals){
+  const r=$('region').value, hz=$('horizonte').value, R=REGIONES[r];
+  if(!R) return;
+  const rotMeta=rotTargetFor(r,hz);
+  setPair('rotMeta','rotMeta2',rotMeta);
+  setPair('vejMeta','vejMeta2',R.vejMeta);
+  setPair('movMensual','movMensual2',R.movMensualKg);
+  if(resetReals){                       // al cambiar de región cargamos su foto real
+    $('rotReal').value=R.rotHoy;
+    $('vejReal').value=R.vejHoy;
+    $('invDisp').value=R.invSpotKg;
+    $('lotes').value=R.lotesViejos;
+  }
+  // glide note
+  const gn=$('glideNote');
+  if(R.rot3M!==R.rot6M){
+    gn.innerHTML='<b>Glide path '+R.label+':</b> '+R.rot3M+'d (Q3–Q4 2026) → '+R.rot6M+'d (Q1 2027+). Horizonte '+hz+' ⇒ meta rotación <b>'+rotMeta+'d</b>. Vejez '+R.vejMeta+'d.';
+  } else {
+    gn.innerHTML='<b>'+R.label+':</b> target rotación estable <b>'+R.rot3M+'d</b> hasta 2027 · vejez '+R.vejMeta+'d. Campos editables (override manual).';
+  }
+  renderTargets();
+}
+// ── Tabla de targets por región (tab 2) ──────────────────────
+function renderTargets(){
+  const k=(+($('kPct').value||33))/100, active=$('region')?$('region').value:null;
+  $('tgtKlbl').textContent='@'+Math.round(k*100)+'%';
+  const b=$('tgtBody'); b.innerHTML='';
+  Object.keys(REGIONES).forEach(key=>{
+    const R=REGIONES[key], X=Math.round(R.movMensualKg*k);
+    const tr=document.createElement('tr');
+    if(key===active) tr.className='is-rot';
+    tr.innerHTML='<td><b>'+R.label+'</b></td><td>'+R.rot3M+'</td><td>'+R.rot6M+'</td><td>'+R.vejMeta+
+      '</td><td>'+fmtKg(R.movMensualKg)+'</td><td>'+fmtKg(X)+'</td>';
+    b.appendChild(tr);
+  });
+}
+
+function recalc(){ update(); calc2(); renderTargets(); }
 
 /* sincronización de inputs compartidos entre tabs */
 function syncPair(aId,bId){
@@ -603,6 +696,8 @@ $('sendToSim').addEventListener('click',()=>{
 ['pos','revMeta','revReal','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct'].forEach(id=>{
   $(id).addEventListener('input',recalc);
 });
+$('region').addEventListener('change',()=>{ applyRegion(true); recalc(); });
+$('horizonte').addEventListener('change',()=>{ applyRegion(false); recalc(); });
 $('lotBody').addEventListener('input',calc2);
 $('lotBody').addEventListener('click',e=>{
   if(e.target.classList.contains('rm')){
@@ -619,6 +714,7 @@ syncPair('rotMeta','rotMeta2');
 syncPair('vejMeta','vejMeta2');
 
 renderLots();
+applyRegion(true);   // carga USA (target 3M) al abrir
 recalc();
 </script>
 </body>
