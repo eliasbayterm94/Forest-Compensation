@@ -286,6 +286,18 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <div class="note"><b>A 100%</b> = lo que aportaría el componente cumpliendo exactamente su meta, con el mismo GMC y multiplicador. <b>Δ</b> negativo = dinero que se deja de ganar; positivo = extra por acelerador (ingresos y rotación pueden superar el 100%; la vejez topa en 100%).</div>
       </div>
 
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-label">Objetivo — días para cerrar la brecha</div>
+        <table class="lots money">
+          <thead><tr><th>Palanca</th><th>Hoy</th><th>Meta</th><th>Faltan</th><th>Recuperas</th></tr></thead>
+          <tbody>
+            <tr><td>Rotación</td><td class="num" id="objRotHoy">–</td><td class="num" id="objRotMeta">–</td><td class="num" id="objRotGap">–</td><td id="objRotMoney">–</td></tr>
+            <tr><td>Vejez</td><td class="num" id="objVejHoy">–</td><td class="num" id="objVejMeta">–</td><td class="num" id="objVejGap">–</td><td id="objVejMoney">–</td></tr>
+          </tbody>
+        </table>
+        <div class="note"><b>Faltan</b> = días que hay que bajar la rotación/vejez de cierre para llegar justo a la meta. <b>Recuperas</b> = dinero que sumas al bono al llegar a esa meta (mismo GMC y multiplicador). En rotación, bajar de la meta suma extra por el acelerador ×1.5; la vejez topa en su meta.</div>
+      </div>
+
       <div class="card">
         <div class="card-label">Multiplicador vs Margen — posición seleccionada</div>
         <canvas id="chart" width="640" height="210"></canvas>
@@ -396,6 +408,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
             <div class="cell"><div class="cell-label">Bono estimado</div><div class="cell-value" id="rvBono">–</div><div class="cell-sub">con GMC y mult. del simulador</div></div>
             <div class="cell featured"><div class="cell-label">Δ vs simulador</div><div class="cell-value" id="rvDelta">–</div><div class="cell-sub">por rotación + vejez</div></div>
           </div>
+          <div class="note" id="rvMoneyNote" style="margin-top:12px;"></div>
           <div class="actions">
             <button class="btn-primary" id="sendToSim">Enviar al simulador →</button>
             <span class="note" style="margin:0;">Copia rotación, vejez e inventario calculados a los inputs del simulador.</span>
@@ -477,6 +490,20 @@ function setMoney(pfx, actual, at100, cumpl){
   const de=$(pfx+'D');
   de.textContent=(d>=0?'+':'−')+fmt$(Math.abs(d));
   de.className='num '+(d>=-0.5?'pos':'neg');
+}
+// Objetivo: días para cerrar la brecha + $ recuperable de una palanca
+function objRow(pfx, hoy, meta, actualM, at100M, floorOn){
+  $(pfx+'Hoy').textContent=Math.round(hoy)+'d';
+  $(pfx+'Meta').textContent=Math.round(meta)+'d';
+  const gapEl=$(pfx+'Gap'), moEl=$(pfx+'Money'), recov=at100M-actualM;
+  if(recov>0.5){                       // hay brecha: dinero en la mesa
+    gapEl.textContent='−'+Math.max(0,Math.round(hoy-meta))+'d'; gapEl.className='num neg';
+    moEl.textContent='+'+fmt$(recov); moEl.className='num pos';
+  } else {                             // meta cumplida (o mejor)
+    gapEl.textContent=floorOn?'✓ piso':'✓'; gapEl.className='num pos';
+    const extra=actualM-at100M;
+    moEl.textContent=extra>0.5?('+'+fmt$(extra)+' extra'):'en meta'; moEl.className='num pos';
+  }
 }
 
 function draw(p, mgNow){
@@ -576,6 +603,8 @@ function update(){
   setMoney('mkRot', rot$, rot100, fmtP(rot,0));
   setMoney('mkVej', vej$, vej100, floorOn?'piso 100%':fmtP(vej,0));
   setMoney('mkTot', bonoN, pot, '');
+  objRow('objRot', rRA, rM, rot$, rot100, false);
+  objRow('objVej', vR,  vM, vej$, vej100, floorOn);
 
   // exponer estado para el tab de Rotación & Vejez
   S={gmc, mN, bonoN, rot, vej, base_ex:ing, rM, vM, mov, k, X, inv, p, mg};
@@ -664,6 +693,13 @@ function calc2(){
   $('rvBono').textContent = fmt$(bonoEst);
   const dd = bonoEst - S.bonoN;
   $('rvDelta').textContent = (dd>=0?'+':'−')+fmt$(Math.abs(dd));
+
+  // Aporte y brecha en $ (usa GMC y multiplicador vigentes del simulador)
+  const unit=S.gmc*S.mN;
+  const rotM=unit*rotComp*PR, vejM=unit*vejComp*PV, rot100=unit*PR, vej100=unit*PV;
+  const gap=(v)=> v>0.5?('faltan '+fmt$(v)+' para 100%'):(v<-0.5?('+'+fmt$(-v)+' extra'):'en meta');
+  $('rvMoneyNote').innerHTML='<b>Rotación</b> aporta '+fmt$(rotM)+' · '+gap(rot100-rotM)+
+    '. &nbsp; <b>Vejez</b> aporta '+fmt$(vejM)+' · '+(floorOn?'piso activo (100%)':gap(vej100-vejM))+'.';
 
   return {rotAdj, vejDias:disp.dias, invKg:disp.kg};
 }
