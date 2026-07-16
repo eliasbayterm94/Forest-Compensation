@@ -140,6 +140,12 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .lots td{padding:4px 6px;border-bottom:1px solid var(--fc-ink-100);vertical-align:middle;}
 .lots input,.lots select{width:100%;padding:6px 8px;font-size:12px;}
 .lots tr.is-rot{background:rgba(149,181,206,.07);}
+.lots.money td,.lots.money th,.lots.targets td,.lots.targets th{text-align:right;}
+.lots.money td:first-child,.lots.money th:first-child,.lots.targets td:first-child,.lots.targets th:first-child{text-align:left;}
+.lots .num{font-family:var(--fc-font-mono);font-size:12.5px;}
+.lots.money tfoot td{border-top:2px solid var(--fc-ink-200);border-bottom:none;padding-top:9px;font-weight:600;color:var(--fc-navy);}
+.lots.money .pos{color:var(--fc-success);}
+.lots.money .neg{color:var(--fc-danger);}
 .lots .rm{appearance:none;border:1px solid var(--fc-ink-200);background:var(--fc-paper);color:var(--fc-ink-500);border-radius:var(--fc-radius-2);width:26px;height:26px;cursor:pointer;font-size:15px;line-height:1;}
 .lots .rm:hover{border-color:var(--fc-danger);color:var(--fc-danger);}
 .addrow{margin-top:12px;appearance:none;border:1px dashed var(--fc-ink-200);background:none;color:var(--fc-ink-500);font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;padding:9px 13px;border-radius:var(--fc-radius-2);cursor:pointer;}
@@ -265,6 +271,20 @@ canvas{width:100%;height:210px;margin-top:6px;}
       <div class="alert info" id="warnCap"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Acelerador ×2 aplica hasta 150%; el excedente cuenta normal (×1).</div></div>
       <div class="alert info" id="warnLot"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnLotTxt"></div></div>
       <div class="alert good" id="warnFloor"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnFloorTxt"></div></div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-label">Aporte al bono por componente · brecha vs 100%</div>
+        <table class="lots money">
+          <thead><tr><th>Componente</th><th>Cumpl.</th><th>Aporta hoy</th><th>A 100%</th><th>Δ vs 100%</th></tr></thead>
+          <tbody>
+            <tr><td>Ingresos</td><td class="num" id="mkIngC">–</td><td class="num" id="mkIng">–</td><td class="num" id="mkIng100">–</td><td id="mkIngD">–</td></tr>
+            <tr><td>Rotación</td><td class="num" id="mkRotC">–</td><td class="num" id="mkRot">–</td><td class="num" id="mkRot100">–</td><td id="mkRotD">–</td></tr>
+            <tr><td>Vejez</td><td class="num" id="mkVejC">–</td><td class="num" id="mkVej">–</td><td class="num" id="mkVej100">–</td><td id="mkVejD">–</td></tr>
+          </tbody>
+          <tfoot><tr><td><b>Bono total</b></td><td class="num" id="mkTotC"></td><td class="num" id="mkTot">–</td><td class="num" id="mkTot100">–</td><td id="mkTotD">–</td></tr></tfoot>
+        </table>
+        <div class="note"><b>A 100%</b> = lo que aportaría el componente cumpliendo exactamente su meta, con el mismo GMC y multiplicador. <b>Δ</b> negativo = dinero que se deja de ganar; positivo = extra por acelerador (ingresos y rotación pueden superar el 100%; la vejez topa en 100%).</div>
+      </div>
 
       <div class="card">
         <div class="card-label">Multiplicador vs Margen — posición seleccionada</div>
@@ -449,9 +469,23 @@ const fmtP=(v,d=1)=>(v*100).toFixed(d)+'%';
 
 let S={gmc:0, mN:0, bonoN:0, rot:0, vej:0}; // estado compartido del simulador
 
+function setMoney(pfx, actual, at100, cumpl){
+  const d=actual-at100;
+  $(pfx).textContent=fmt$(actual);
+  $(pfx+'100').textContent=fmt$(at100);
+  const c=$(pfx+'C'); if(c) c.textContent=cumpl;
+  const de=$(pfx+'D');
+  de.textContent=(d>=0?'+':'−')+fmt$(Math.abs(d));
+  de.className='num '+(d>=-0.5?'pos':'neg');
+}
+
 function draw(p, mgNow){
   const cv=$('chart'), ctx=cv.getContext('2d');
-  const W=cv.width, H=cv.height, L=42, B=H-24, T=10, R=W-10;
+  const dpr=window.devicePixelRatio||1;
+  const W=cv.clientWidth||640, H=cv.clientHeight||210;   // dibuja en px CSS
+  cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); // backing store nítido
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const L=42, B=H-24, T=10, R=W-10;
   ctx.clearRect(0,0,W,H);
   const x=mg=>L+(mg-.16)/(.50-.16)*(R-L);
   const y=m=>B-(m-0)/(0.135)*(B-T);
@@ -532,8 +566,19 @@ function update(){
   if(floorOn){ $('warnFloor').style.display='flex'; $('warnFloorTxt').textContent='Inventario disponible '+fmtKg(inv)+' kg < X '+fmtKg(X)+' kg: la vejez se neutraliza a 100% (no castiga).'; }
   else $('warnFloor').style.display='none';
 
+  // ── Aporte en $ por componente y brecha vs 100% ──
+  // bono = GMC × Mult × (ing + rot·PR + vej·PV) → cada componente aporta lineal.
+  const unit=gmc*mN;                       // valor de 1 punto de base ($)
+  const ing$=unit*ing, rot$=unit*rot*PR, vej$=unit*vej*PV;
+  const ing100=unit*PW, rot100=unit*PR, vej100=unit*PV;   // aporte si el componente = meta (100%)
+  const pot=unit;                          // bono si los 3 al 100% (base=1.0)
+  setMoney('mkIng', ing$, ing100, fmtP(cum,0));
+  setMoney('mkRot', rot$, rot100, fmtP(rot,0));
+  setMoney('mkVej', vej$, vej100, floorOn?'piso 100%':fmtP(vej,0));
+  setMoney('mkTot', bonoN, pot, '');
+
   // exponer estado para el tab de Rotación & Vejez
-  S={gmc, mN, bonoN, rot, vej, base_ex:ing, rM, vM, mov, k, X, inv};
+  S={gmc, mN, bonoN, rot, vej, base_ex:ing, rM, vM, mov, k, X, inv, p, mg};
 
   draw(p, mg);
 }
@@ -698,6 +743,7 @@ $('sendToSim').addEventListener('click',()=>{
 });
 $('region').addEventListener('change',()=>{ applyRegion(true); recalc(); });
 $('horizonte').addEventListener('change',()=>{ applyRegion(false); recalc(); });
+window.addEventListener('resize',()=>{ if(S&&S.p!=null) draw(S.p,S.mg); });
 $('lotBody').addEventListener('input',calc2);
 $('lotBody').addEventListener('click',e=>{
   if(e.target.classList.contains('rm')){
