@@ -33,7 +33,16 @@ body{font-family:var(--fc-font-body);font-size:16px;line-height:1.5;color:var(--
 /* header */
 .eyebrow{font-family:var(--fc-font-body);font-weight:600;font-size:10px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);}
 h1{font-family:var(--fc-font-display);font-weight:700;font-size:24px;line-height:1.2;letter-spacing:var(--fc-ls-display);text-transform:uppercase;color:var(--fc-navy);margin:6px 0 2px;}
-.sub{font-size:12px;color:var(--fc-ink-500);letter-spacing:var(--fc-ls-loose);margin-bottom:28px;}
+.sub{font-size:12px;color:var(--fc-ink-500);letter-spacing:var(--fc-ls-loose);margin-bottom:20px;}
+
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--fc-ink-100);margin-bottom:26px;}
+.tab-btn{appearance:none;background:none;border:none;font-family:var(--fc-font-display);font-weight:700;font-size:10px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-300);padding:11px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--fc-dur-fast) var(--fc-ease-out);}
+.tab-btn:hover{color:var(--fc-ink-500);}
+.tab-btn.active{color:var(--fc-navy);border-bottom-color:var(--fc-yellow);}
+.tabpanel{display:none;}
+.tabpanel.active{display:block;animation:fade .2s var(--fc-ease-out);}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 
 /* layout */
 .grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;}
@@ -92,9 +101,11 @@ input[type=range]{width:100%;accent-color:var(--fc-navy);margin-top:2px;}
 .alert{background:var(--fc-blue-100);border:1px solid var(--fc-blue-200);border-left:3px solid var(--fc-warning);border-radius:var(--fc-radius-3);padding:11px 14px;display:none;align-items:center;gap:12px;margin-bottom:10px;}
 .alert.critical{border-left-color:var(--fc-danger);}
 .alert.info{border-left-color:var(--fc-blue-700);}
+.alert.good{border-left-color:var(--fc-success);}
 .alert-ico{width:28px;height:28px;border-radius:var(--fc-radius-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(196,120,32,.18);color:#9c5e15;}
 .alert.critical .alert-ico{background:rgba(168,53,28,.15);color:var(--fc-danger);}
 .alert.info .alert-ico{background:rgba(91,133,163,.15);color:var(--fc-blue-700);}
+.alert.good .alert-ico{background:rgba(77,124,47,.15);color:var(--fc-success);}
 .alert-ico svg{width:15px;height:15px;stroke-width:2;}
 .alert-txt{font-size:12px;font-weight:500;color:var(--fc-navy);line-height:1.4;}
 
@@ -108,6 +119,38 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .sw.dot{width:8px;height:8px;border:none;border-radius:50%;background:var(--fc-yellow);outline:2px solid var(--fc-navy);}
 
 .rules{font-size:10.5px;color:var(--fc-ink-500);line-height:1.6;margin-top:14px;}
+
+/* ── Tab 2 — Rotación & Vejez ─────────────────────────────────── */
+.lead{font-size:13px;line-height:1.65;color:var(--fc-ink-500);max-width:760px;margin-bottom:18px;}
+.lead b{color:var(--fc-navy);font-weight:600;}
+.explain{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+@media(max-width:767px){.explain{grid-template-columns:1fr;}}
+.formula{background:var(--fc-navy);color:#fff;border-radius:var(--fc-radius-3);padding:20px 22px;position:relative;overflow:hidden;}
+.formula::before{content:'';position:absolute;top:0;right:0;width:90px;height:90px;background:radial-gradient(circle at top right,rgba(231,226,68,.10),transparent 70%);pointer-events:none;}
+.formula .ttl{font-family:var(--fc-font-display);font-weight:700;font-size:11px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-yellow);margin-bottom:12px;}
+.formula .eq{font-family:var(--fc-font-mono);font-size:12px;line-height:1.7;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--fc-radius-2);padding:12px 14px;margin-bottom:12px;overflow-x:auto;}
+.formula .eq .frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 4px;}
+.formula .eq .frac .num{border-bottom:1px solid var(--fc-on-navy-3);padding:0 6px 2px;}
+.formula .eq .frac .den{padding:2px 6px 0;color:var(--fc-on-navy-2);}
+.formula .gloss{font-size:11.5px;line-height:1.6;color:var(--fc-on-navy-2);}
+.formula .gloss b{color:#fff;font-weight:600;}
+
+.lots{width:100%;border-collapse:collapse;margin-top:6px;}
+.lots th{font-family:var(--fc-font-display);font-weight:700;font-size:8.5px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);text-align:left;padding:6px 8px;border-bottom:1px solid var(--fc-ink-100);}
+.lots td{padding:4px 6px;border-bottom:1px solid var(--fc-ink-100);vertical-align:middle;}
+.lots input,.lots select{width:100%;padding:6px 8px;font-size:12px;}
+.lots tr.is-rot{background:rgba(149,181,206,.07);}
+.lots .rm{appearance:none;border:1px solid var(--fc-ink-200);background:var(--fc-paper);color:var(--fc-ink-500);border-radius:var(--fc-radius-2);width:26px;height:26px;cursor:pointer;font-size:15px;line-height:1;}
+.lots .rm:hover{border-color:var(--fc-danger);color:var(--fc-danger);}
+.addrow{margin-top:12px;appearance:none;border:1px dashed var(--fc-ink-200);background:none;color:var(--fc-ink-500);font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;padding:9px 13px;border-radius:var(--fc-radius-2);cursor:pointer;}
+.addrow:hover{border-color:var(--fc-navy);color:var(--fc-navy);}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;}
+.btn-primary{appearance:none;border:none;background:var(--fc-navy);color:#fff;font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;padding:11px 18px;border-radius:var(--fc-radius-2);cursor:pointer;}
+.btn-primary:hover{background:var(--fc-navy-dark);}
+.floor-badge{display:inline-block;font-family:var(--fc-font-mono);font-weight:500;font-size:11px;padding:3px 11px;border-radius:var(--fc-radius-pill);}
+.floor-on{background:rgba(77,124,47,.14);color:var(--fc-success);}
+.floor-off{background:var(--fc-ink-100);color:var(--fc-ink-500);}
+.share-input{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px;}
 </style>
 </head>
 <body>
@@ -116,6 +159,13 @@ canvas{width:100%;height:210px;margin-top:6px;}
   <h1>Simulador Modelo Spot v2</h1>
   <div class="sub">Multiplicador interpolado · Acelerador topado · Rotación y vejez en días · Jul 2026</div>
 
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="sim" role="tab">Simulador</button>
+    <button class="tab-btn" data-tab="rv" role="tab">Rotación &amp; Vejez</button>
+  </div>
+
+  <!-- ══════════════════ TAB 1 · SIMULADOR ══════════════════ -->
+  <div class="tabpanel active" id="panel-sim">
   <div class="grid">
     <div class="card">
       <div class="card-label">Inputs del mes</div>
@@ -147,12 +197,18 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
       <div style="margin-top:8px;"><span class="mini">Lotes disponibles &gt;150 días de vejez (+2 días c/u)</span><input type="number" id="lotes" value="0" min="0" step="1"></div>
 
-      <label>Vejez cafés disponibles — cierre de mes <span class="val" id="vVej">90%</span></label>
+      <label>Vejez cafés disponibles — cierre de mes <span class="val" id="vVej">100%</span></label>
       <div class="two">
         <div><span class="mini">Meta (días)</span><input type="number" id="vejMeta" value="45" min="1" step="1"></div>
         <div><span class="mini">Real (días)</span><input type="number" id="vejReal" value="50" min="1" step="1"></div>
       </div>
-      <div class="note">Menos días = mejor. Cada día de mejora vs meta acelera ×1.5; peso máximo por componente: 30% (vs 20% base).</div>
+      <div class="two" style="margin-top:8px;">
+        <div><span class="mini">Inventario disp. al cierre (kg)</span><input type="number" id="invDisp" value="40000" min="0" step="1000"></div>
+        <div><span class="mini">Movimiento región (kg/mes)</span><input type="number" id="movMensual" value="90000" min="0" step="1000"></div>
+      </div>
+      <label>Umbral piso de vejez — k <span class="val" id="vK">33% · X 0</span></label>
+      <input type="range" id="kPct" min="10" max="75" value="33" step="1">
+      <div class="note">Vejez <b>solo castiga</b>: si la vejez real ≤ meta se paga 100% (no bonifica). Si el inventario disponible &lt; X (= k% del movimiento mensual), la vejez se neutraliza a 100% — no se penaliza el inventario mínimo operativo. Rotación sí acelera ×1.5 por día bajo meta (peso máx 30%).</div>
     </div>
 
     <div>
@@ -176,7 +232,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
       <div class="strip">
         <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value" id="cIng">–</div><div class="cell-sub">peso 60% · apertura 70% · acel. ×2 hasta 150%</div></div>
         <div class="cell"><div class="cell-label">Rotación</div><div class="cell-value" id="cRot">–</div><div class="cell-sub">peso 20% · acel. ×1.5 · máx 30%</div></div>
-        <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value" id="cVej">–</div><div class="cell-sub">peso 20% · acel. ×1.5 · máx 30%</div></div>
+        <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value" id="cVej">–</div><div class="cell-sub">peso 20% · solo castiga · máx 20%</div></div>
         <div class="cell"><div class="cell-label">Base total</div><div class="cell-value" id="cBase">–</div><div class="cell-sub">suma de componentes</div></div>
         <div class="cell featured"><div class="cell-label">Bono</div><div class="cell-value" id="cBono">–</div><div class="cell-sub">GMC × Base × Mult <span id="cMult"></span></div></div>
       </div>
@@ -186,6 +242,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
       <div class="alert" id="warnTr"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Tramo reducido (70–85%): se paga el 50% del valor del componente de ingresos a 85%.</div></div>
       <div class="alert info" id="warnCap"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Acelerador ×2 aplica hasta 150%; el excedente cuenta normal (×1).</div></div>
       <div class="alert info" id="warnLot"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnLotTxt"></div></div>
+      <div class="alert good" id="warnFloor"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnFloorTxt"></div></div>
 
       <div class="card">
         <div class="card-label">Multiplicador vs Margen — posición seleccionada</div>
@@ -199,7 +256,94 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
 
       <div class="rules">
-        Reglas v2: Base = Ingresos×60% + Rotación×20% + Vejez×20%. Componente de ingresos: 0 si cumplimiento &lt; 70%; entre 70% y 85% se paga el 50% del valor a 85% (25.5% de base); de 85% en adelante lineal; por encima de 100% acelerador ×2 por punto hasta 150%; el excedente sobre 150% cuenta normal (×1). GMC = ventas reales × margen. Rotación = promedio por región de los últimos 90 días; Vejez = ponderada al cierre de mes de los cafés disponibles; ambas en días (menos = mejor). Peor que meta: cumplimiento = meta ÷ real. Mejor que meta: cada día de mejora acelera ×1.5, con peso máximo de 30% por componente. Cada lote disponible con &gt;150 días de vejez suma 2 días a la rotación al cierre. Margen &lt; 18% ⇒ bono $0. El pago sigue sujeto a cascada (proporcional a cartera cobrada). Modelo anterior (comparación): ingresos = 0 si cumplimiento &lt; 85%; acelerador ×2 sin tope; multiplicador por escalones; rotación/vejez sin acelerador ni regla de lotes.
+        Reglas v2: Base = Ingresos×60% + Rotación×20% + Vejez×20%. Componente de ingresos: 0 si cumplimiento &lt; 70%; entre 70% y 85% se paga el 50% del valor a 85% (25.5% de base); de 85% en adelante lineal; por encima de 100% acelerador ×2 por punto hasta 150%; el excedente sobre 150% cuenta normal (×1). GMC = ventas reales × margen. Rotación = promedio ponderado por región de los últimos 90 días (días, menos = mejor): peor que meta ⇒ meta ÷ real; mejor que meta ⇒ cada día acelera ×1.5, peso máx 30%. Vejez = promedio ponderado al cierre de mes de los cafés disponibles (solo castiga): mejor o igual a la meta ⇒ 100% (no bonifica); peor que meta ⇒ meta ÷ real; si el inventario disponible &lt; X (k% del movimiento mensual de la región) ⇒ 100%, peso máx 20%. Cada lote disponible con &gt;150 días de vejez suma 2 días a la rotación al cierre. Margen &lt; 18% ⇒ bono $0. El pago sigue sujeto a cascada (proporcional a cartera cobrada). Modelo anterior (comparación): ingresos = 0 si cumplimiento &lt; 85%; acelerador ×2 sin tope; multiplicador por escalones; rotación/vejez sin acelerador ni regla de lotes.
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ══════════════════ TAB 2 · ROTACIÓN & VEJEZ ══════════════════ -->
+  <div class="tabpanel" id="panel-rv">
+    <p class="lead">
+      La <b>rotación</b> y la <b>vejez</b> son dos caras del mismo inventario: la rotación mira lo que <b>ya salió</b> (qué tan rápido movemos el café) y la vejez mira lo que <b>sigue en bodega</b> (qué tan viejo está lo que aún no vendemos). Ambas se ponderan por kilos, así un lote grande pesa más que uno pequeño. Aquí abajo puedes armar los lotes reales de la región y ver cómo se traducen en cada componente del bono del simulador.
+    </p>
+
+    <div class="explain">
+      <div class="formula">
+        <div class="ttl">Rotación · rolling 90 días</div>
+        <div class="eq">
+          Rotación =
+          <span class="frac"><span class="num">Σ ( kg rotados × días hasta rotar )</span><span class="den">Σ kg rotados en los 90 días</span></span>
+        </div>
+        <div class="gloss">Promedio de días que tardó en salir cada kilo, <b>ponderado por kilos</b>. Corre como ventana móvil de 90 días. <b>Menos días = mejor.</b> Es la palanca que el comercial <b>sí</b> mueve, por eso acelera ×1.5 cuando supera la meta.</div>
+      </div>
+      <div class="formula">
+        <div class="ttl">Vejez · cierre de mes</div>
+        <div class="eq">
+          Vejez =
+          <span class="frac"><span class="num">Σ ( kg disponibles × días en bodega )</span><span class="den">Σ kg disponibles</span></span>
+        </div>
+        <div class="gloss">Edad promedio de lo que <b>sigue disponible</b>, ponderada por kilos. <b>Solo castiga:</b> si es mejor que la meta se paga 100%, nunca más. Y si el inventario disponible cae por debajo de <b>X</b> (mínimo operativo), no castiga — no es una palanca sobre colas de lotes.</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-label">Piso de vejez (X) — región</div>
+        <div class="note" style="margin-top:0;margin-bottom:12px;">Estos inputs son compartidos con el simulador. <b>X = k% del movimiento mensual.</b> Por debajo de X, la vejez no castiga.</div>
+        <label>Movimiento mensual región <span class="val" id="rvMovVal">0 kg</span></label>
+        <input type="number" id="movMensual2" value="90000" min="0" step="1000">
+        <label>Umbral k (% del movimiento) <span class="val" id="rvKVal">33%</span></label>
+        <input type="range" id="kPct2" min="10" max="75" value="33" step="1">
+        <div class="gmc-box" style="margin-top:14px;"><span class="l">Piso X (kg)</span><span class="n" id="rvX">0</span></div>
+        <div class="note">Ancla: un contenedor de café verde ≈ 19,200 kg (320 sacos × 60 kg). k=33% deja el piso en ≈ un contenedor / ~10 días de cobertura para volumen medio. Baja k para castigar más agresivo la frescura; súbelo para dar holgura.</div>
+
+        <div class="card-label" style="margin-top:22px;">Metas (del simulador)</div>
+        <div class="two">
+          <div><span class="mini">Rotación meta (días)</span><input type="number" id="rotMeta2" value="60" min="1" step="1"></div>
+          <div><span class="mini">Vejez meta (días)</span><input type="number" id="vejMeta2" value="45" min="1" step="1"></div>
+        </div>
+        <div class="note">Se sincronizan con el simulador. Cámbialas aquí o allá, siempre reflejan el mismo modelo.</div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-label">Lotes de la región</div>
+          <div class="note" style="margin-top:0;margin-bottom:6px;">Marca cada lote como <b>Rotado</b> (ya salió, alimenta rotación) o <b>Disponible</b> (sigue en bodega, alimenta vejez). Los disponibles &gt;150 días suman +2 días a la rotación.</div>
+          <table class="lots">
+            <thead><tr><th style="width:34%">Kg</th><th style="width:28%">Días</th><th style="width:30%">Estado</th><th style="width:8%"></th></tr></thead>
+            <tbody id="lotBody"></tbody>
+          </table>
+          <button class="addrow" id="addRow">+ Agregar lote</button>
+        </div>
+
+        <div class="strip">
+          <div class="cell"><div class="cell-label">Rotación</div><div class="cell-value" id="rvRotD">–</div><div class="cell-sub" id="rvRotSub">días ponderados</div></div>
+          <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value" id="rvVejD">–</div><div class="cell-sub">días ponderados</div></div>
+          <div class="cell"><div class="cell-label">Inv. disponible</div><div class="cell-value" id="rvInv">–</div><div class="cell-sub" id="rvInvSub">kg en bodega</div></div>
+          <div class="cell"><div class="cell-label">Rotado 90d</div><div class="cell-value" id="rvKgRot">–</div><div class="cell-sub">kg movidos</div></div>
+          <div class="cell featured"><div class="cell-label">Piso X</div><div class="cell-value" id="rvXcell">–</div><div class="cell-sub" id="rvFloorSub">estado</div></div>
+        </div>
+
+        <div class="alert good" id="rvFloorAlert" style="display:flex;"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="rvFloorTxt"></div></div>
+
+        <div class="card">
+          <div class="card-label">Impacto en el bono</div>
+          <div class="strip" style="grid-template-columns:repeat(4,1fr);margin-bottom:0;border-radius:var(--fc-radius-2);">
+            <div class="cell"><div class="cell-label">Comp. rotación</div><div class="cell-value" id="rvRotComp">–</div><div class="cell-sub" id="rvRotCumpl">cumpl.</div></div>
+            <div class="cell"><div class="cell-label">Comp. vejez</div><div class="cell-value" id="rvVejComp">–</div><div class="cell-sub" id="rvVejCumpl">cumpl.</div></div>
+            <div class="cell"><div class="cell-label">Bono estimado</div><div class="cell-value" id="rvBono">–</div><div class="cell-sub">con GMC y mult. del simulador</div></div>
+            <div class="cell featured"><div class="cell-label">Δ vs simulador</div><div class="cell-value" id="rvDelta">–</div><div class="cell-sub">por rotación + vejez</div></div>
+          </div>
+          <div class="actions">
+            <button class="btn-primary" id="sendToSim">Enviar al simulador →</button>
+            <span class="note" style="margin:0;">Copia rotación, vejez e inventario calculados a los inputs del simulador.</span>
+          </div>
+        </div>
+
+        <div class="rules">
+          Cómo se calcula el impacto: la rotación ponderada (más +2 días por cada disponible &gt;150 días) entra a <b>meta ÷ real</b>, y si supera la meta acelera ×1.5 (peso máx 30%). La vejez ponderada solo castiga: <b>100%</b> si es mejor o igual a la meta o si el inventario disponible &lt; X; de lo contrario <b>meta ÷ real</b> (peso máx 20%). El bono estimado usa el GMC y el multiplicador vigentes en el simulador, cambiando solo estos dos componentes.
+        </div>
       </div>
     </div>
   </div>
@@ -239,9 +383,17 @@ function ingNew(c){
   if(c<FT) return SH*FT*PW;
   return Math.min(c,1)*PW + Math.max(Math.min(c,CAP)-1,0)*ACC*PW + Math.max(c-CAP,0)*PW;
 }
+// Rotación: palanca — peor que meta = meta/real; mejor = acelera ×1.5, tope 150%
+function compRot(m,r){ if(m<=0||r<=0) return 0; return r>=m ? m/r : Math.min(1+(m-r)/m*1.5, 1.5); }
+// Vejez: solo castiga — mejor o igual a meta = 100%; inventario < X = 100%; peor = meta/real
+function compVej(m,r,inv,X){ if(X>0 && inv>=0 && inv<X) return 1; if(m<=0||r<=0) return 0; return r<=m ? 1 : m/r; }
+
 const $=id=>document.getElementById(id);
 const fmt$=v=>'$'+Math.round(v).toLocaleString('en-US');
+const fmtKg=v=>Math.round(v).toLocaleString('en-US');
 const fmtP=(v,d=1)=>(v*100).toFixed(d)+'%';
+
+let S={gmc:0, mN:0, bonoN:0, rot:0, vej:0}; // estado compartido del simulador
 
 function draw(p, mgNow){
   const cv=$('chart'), ctx=cv.getContext('2d');
@@ -286,16 +438,18 @@ function update(){
   const rM=+$('rotMeta').value||0, rR=+$('rotReal').value||0;
   const vM=+$('vejMeta').value||0, vR=+$('vejReal').value||0;
   const lot=+$('lotes').value||0;
+  const inv=+$('invDisp').value||0, mov=+$('movMensual').value||0, k=(+$('kPct').value||0)/100;
+  const X=mov*k;
   const rRA=rR>0?rR+2*lot:0;   // lotes >150 días suman 2 días c/u a rotación
-  // Cumplimiento días: peor que meta = meta/real; mejor que meta = acelerador ×1.5 por día, tope 150% (peso máx 30%)
-  const comp=(m,r)=>{ if(m<=0||r<=0) return 0; return r>=m ? m/r : Math.min(1+(m-r)/m*1.5, 1.5); };
-  const rot=comp(rM,rRA), vej=comp(vM,vR);
+  const rot=compRot(rM,rRA), vej=compVej(vM,vR,inv,X);
+  const floorOn = X>0 && inv<X;
   // Modelo anterior: sin acelerador, sin regla de lotes, topado en 100%
   const rotO=rR>0?Math.min(rM/rR,1):0, vejO=vR>0?Math.min(vM/vR,1):0;
 
   $('vCum').textContent=fmtP(cum,0); $('vMg').textContent=fmtP(mg);
   $('vGmc').textContent=fmt$(gmc);
   $('vRot').textContent=fmtP(rot,0); $('vVej').textContent=fmtP(vej,0);
+  $('vK').textContent=(+$('kPct').value)+'% · X '+fmtKg(X);
 
   const ing=ingNew(cum), baseN=ing+rot*PR+vej*PV, mN=multNew(mg,p);
   const bonoN=gmc*baseN*mN;
@@ -321,13 +475,151 @@ function update(){
   $('warnCap').style.display = cum>CAP?'flex':'none';
   if(lot>0){ $('warnLot').style.display='flex'; $('warnLotTxt').textContent=lot+' lote(s) >150 días suman '+(2*lot)+' días a rotación: real ajustado '+rRA+' días.'; }
   else $('warnLot').style.display='none';
+  if(floorOn){ $('warnFloor').style.display='flex'; $('warnFloorTxt').textContent='Inventario disponible '+fmtKg(inv)+' kg < X '+fmtKg(X)+' kg: la vejez se neutraliza a 100% (no castiga).'; }
+  else $('warnFloor').style.display='none';
+
+  // exponer estado para el tab de Rotación & Vejez
+  S={gmc, mN, bonoN, rot, vej, base_ex:ing, rM, vM, mov, k, X, inv};
 
   draw(p, mg);
 }
-['pos','revMeta','revReal','mg','rotMeta','rotReal','lotes','vejMeta','vejReal'].forEach(id=>{
-  $(id).addEventListener('input',update);
+
+/* ── Tab 2 · Rotación & Vejez ─────────────────────────────────── */
+const LOTS0=[
+  {kg:20000, dias:45,  estado:'rotado'},
+  {kg:15000, dias:70,  estado:'rotado'},
+  {kg:18000, dias:30,  estado:'disponible'},
+  {kg:12000, dias:60,  estado:'disponible'},
+  {kg:8000,  dias:160, estado:'disponible'}
+];
+function lotRow(l){
+  const tr=document.createElement('tr');
+  tr.className = l.estado==='rotado' ? 'is-rot' : '';
+  tr.innerHTML =
+    '<td><input type="number" class="lk" value="'+l.kg+'" min="0" step="500"></td>'+
+    '<td><input type="number" class="ld" value="'+l.dias+'" min="0" step="1"></td>'+
+    '<td><select class="le"><option value="rotado"'+(l.estado==='rotado'?' selected':'')+'>Rotado</option>'+
+        '<option value="disponible"'+(l.estado==='disponible'?' selected':'')+'>Disponible</option></select></td>'+
+    '<td><button class="rm" title="Quitar">×</button></td>';
+  return tr;
+}
+function renderLots(){
+  const b=$('lotBody'); b.innerHTML='';
+  LOTS0.forEach(l=>b.appendChild(lotRow(l)));
+}
+function readLots(){
+  const rows=[...$('lotBody').querySelectorAll('tr')];
+  return rows.map(tr=>({
+    kg:+tr.querySelector('.lk').value||0,
+    dias:+tr.querySelector('.ld').value||0,
+    estado:tr.querySelector('.le').value
+  }));
+}
+function wavg(arr){ // ponderado por kg -> días
+  const sk=arr.reduce((s,l)=>s+l.kg,0);
+  if(sk<=0) return {dias:0, kg:0};
+  return {dias:arr.reduce((s,l)=>s+l.kg*l.dias,0)/sk, kg:sk};
+}
+function calc2(){
+  // colorear filas rotado/disponible
+  [...$('lotBody').querySelectorAll('tr')].forEach(tr=>{
+    tr.className = tr.querySelector('.le').value==='rotado' ? 'is-rot' : '';
+  });
+  const lots=readLots();
+  const rot=wavg(lots.filter(l=>l.estado==='rotado'));
+  const disp=wavg(lots.filter(l=>l.estado==='disponible'));
+  const viejos=lots.filter(l=>l.estado==='disponible' && l.dias>150).length;
+  const rotAdj=rot.kg>0 ? rot.dias+2*viejos : 0;
+
+  const mov=+$('movMensual2').value||0, k=(+$('kPct2').value||0)/100, X=mov*k;
+  const rM=+$('rotMeta2').value||0, vM=+$('vejMeta2').value||0;
+  const floorOn = X>0 && disp.kg<X;
+
+  const rotComp=compRot(rM,rotAdj), vejComp=compVej(vM,disp.dias,disp.kg,X);
+
+  $('rvRotD').textContent = rot.kg>0 ? rotAdj.toFixed(1) : '–';
+  $('rvRotSub').textContent = viejos>0 ? ('incluye +'+(2*viejos)+'d por '+viejos+' lote(s) >150d') : 'días ponderados';
+  $('rvVejD').textContent = disp.kg>0 ? disp.dias.toFixed(1) : '–';
+  $('rvInv').textContent = fmtKg(disp.kg);
+  $('rvInvSub').textContent = 'kg en bodega';
+  $('rvKgRot').textContent = fmtKg(rot.kg);
+  $('rvXcell').textContent = fmtKg(X);
+  $('rvFloorSub').textContent = floorOn ? 'activo · no castiga' : 'inactivo';
+  $('rvX').textContent = fmtKg(X);
+  $('rvMovVal').textContent = fmtKg(mov)+' kg';
+  $('rvKVal').textContent = (+$('kPct2').value)+'%';
+
+  $('rvFloorAlert').className = 'alert '+(floorOn?'good':'info');
+  $('rvFloorAlert').querySelector('.alert-txt').textContent = floorOn
+    ? ('Inventario disponible '+fmtKg(disp.kg)+' kg < X '+fmtKg(X)+' kg → vejez neutralizada a 100%. El comercial no carga inventario penalizable.')
+    : ('Inventario disponible '+fmtKg(disp.kg)+' kg ≥ X '+fmtKg(X)+' kg → la vejez aplica normal ('+fmtP(vejComp,0)+').');
+
+  $('rvRotComp').textContent = fmtP(rotComp*PR);
+  $('rvRotCumpl').textContent = 'cumpl. '+fmtP(rotComp,0);
+  $('rvVejComp').textContent = fmtP(vejComp*PV);
+  $('rvVejCumpl').textContent = floorOn ? 'piso · 100%' : ('cumpl. '+fmtP(vejComp,0));
+
+  // bono estimado: reemplaza rot y vej en la base, mantiene GMC y multiplicador del simulador
+  const baseEst = S.base_ex + rotComp*PR + vejComp*PV;
+  const bonoEst = S.gmc*baseEst*S.mN;
+  $('rvBono').textContent = fmt$(bonoEst);
+  const dd = bonoEst - S.bonoN;
+  $('rvDelta').textContent = (dd>=0?'+':'−')+fmt$(Math.abs(dd));
+
+  return {rotAdj, vejDias:disp.dias, invKg:disp.kg};
+}
+
+function recalc(){ update(); calc2(); }
+
+/* sincronización de inputs compartidos entre tabs */
+function syncPair(aId,bId){
+  const a=$(aId), b=$(bId);
+  a.addEventListener('input',()=>{ b.value=a.value; recalc(); });
+  b.addEventListener('input',()=>{ a.value=b.value; recalc(); });
+}
+
+/* tab switching */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tabpanel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    $('panel-'+btn.dataset.tab).classList.add('active');
+    recalc();
+  });
 });
-update();
+
+/* enviar cálculo del tab 2 al simulador */
+$('sendToSim').addEventListener('click',()=>{
+  const r=calc2();
+  $('rotReal').value=Math.round(r.rotAdj);
+  $('lotes').value=0; // ya viene incluido en rotAdj
+  $('vejReal').value=Math.round(r.vejDias);
+  $('invDisp').value=Math.round(r.invKg);
+  document.querySelector('.tab-btn[data-tab="sim"]').click();
+});
+
+/* listeners */
+['pos','revMeta','revReal','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct'].forEach(id=>{
+  $(id).addEventListener('input',recalc);
+});
+$('lotBody').addEventListener('input',calc2);
+$('lotBody').addEventListener('click',e=>{
+  if(e.target.classList.contains('rm')){
+    if($('lotBody').querySelectorAll('tr').length>1){ e.target.closest('tr').remove(); calc2(); }
+  }
+});
+$('addRow').addEventListener('click',()=>{
+  $('lotBody').appendChild(lotRow({kg:10000,dias:40,estado:'disponible'}));
+  calc2();
+});
+syncPair('movMensual','movMensual2');
+syncPair('kPct','kPct2');
+syncPair('rotMeta','rotMeta2');
+syncPair('vejMeta','vejMeta2');
+
+renderLots();
+recalc();
 </script>
 </body>
 </html>
