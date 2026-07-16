@@ -146,6 +146,19 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .lots.money tfoot td{border-top:2px solid var(--fc-ink-200);border-bottom:none;padding-top:9px;font-weight:600;color:var(--fc-navy);}
 .lots.money .pos{color:var(--fc-success);}
 .lots.money .neg{color:var(--fc-danger);}
+.lots.status td,.lots.status th{text-align:right;}
+.lots.status td:first-child,.lots.status th:first-child{text-align:left;}
+.lots.status .num{font-family:var(--fc-font-mono);font-size:12.5px;}
+.lots.risk td{vertical-align:middle;}
+.lots.risk input,.lots.risk select{width:100%;padding:6px 8px;font-size:12px;}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-right:2px;}
+.dot.ok{background:var(--fc-success);}
+.dot.warn{background:var(--fc-warning);}
+.dot.bad{background:var(--fc-danger);}
+.st-badge{display:inline-block;font-family:var(--fc-font-mono);font-size:10.5px;font-weight:500;padding:2px 9px;border-radius:var(--fc-radius-pill);}
+.st-ok{background:rgba(77,124,47,.14);color:var(--fc-success);}
+.st-warn{background:rgba(196,120,32,.16);color:#9c5e15;}
+.st-bad{background:rgba(168,53,28,.14);color:var(--fc-danger);}
 .lots .rm{appearance:none;border:1px solid var(--fc-ink-200);background:var(--fc-paper);color:var(--fc-ink-500);border-radius:var(--fc-radius-2);width:26px;height:26px;cursor:pointer;font-size:15px;line-height:1;}
 .lots .rm:hover{border-color:var(--fc-danger);color:var(--fc-danger);}
 .addrow{margin-top:12px;appearance:none;border:1px dashed var(--fc-ink-200);background:none;color:var(--fc-ink-500);font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;padding:9px 13px;border-radius:var(--fc-radius-2);cursor:pointer;}
@@ -168,6 +181,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
   <div class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="sim" role="tab">Simulador</button>
     <button class="tab-btn" data-tab="rv" role="tab">Rotación &amp; Vejez</button>
+    <button class="tab-btn" data-tab="status" role="tab">Status equipo</button>
   </div>
 
   <!-- ══════════════════ TAB 1 · SIMULADOR ══════════════════ -->
@@ -421,6 +435,52 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
     </div>
   </div>
+
+  <!-- ══════════════════ TAB 3 · STATUS EQUIPO ══════════════════ -->
+  <div class="tabpanel" id="panel-status">
+    <p class="lead">
+      Foto de <b>rotación y vejez por región</b> contra el target, con la plata atascada en cola. Semáforo: <span class="dot ok"></span> en meta · <span class="dot warn"></span> cerca (≤15% sobre) · <span class="dot bad"></span> fuera (&gt;15%). Los agregados vienen del análisis jun-2025→jul-2026; la lista de lotes se puebla al conectar el Google Sheet.
+    </p>
+
+    <div class="strip">
+      <div class="cell featured"><div class="cell-label">$ en riesgo (&gt;150d)</div><div class="cell-value" id="stRiesgo">–</div><div class="cell-sub">inventario en cola, 4 regiones</div></div>
+      <div class="cell"><div class="cell-label">Peor vejez</div><div class="cell-value" id="stPeorVej">–</div><div class="cell-sub" id="stPeorVejSub">vs target</div></div>
+      <div class="cell"><div class="cell-label">Peor rotación</div><div class="cell-value" id="stPeorRot">–</div><div class="cell-sub" id="stPeorRotSub">vs target</div></div>
+      <div class="cell"><div class="cell-label">Regiones fuera de target</div><div class="cell-value" id="stRojas">–</div><div class="cell-sub">rotación o vejez</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-label">Status por región</div>
+      <table class="lots status">
+        <thead><tr>
+          <th style="width:16%">Región</th>
+          <th>Rotación 90d</th><th>Target</th>
+          <th>Vejez</th><th>Target</th>
+          <th>Cobertura</th><th>% kg &gt;150d</th><th>$ en riesgo</th>
+        </tr></thead>
+        <tbody id="stBody"></tbody>
+      </table>
+      <div class="note">Rotación y vejez en días ponderados por kg (menos = mejor). <b>Cobertura</b> = meses de venta que cubre el inventario disponible. Target de rotación = meta del trimestre vigente (USA en glide path 95→85). Vejez fuera de target en las 4 regiones: el problema es la <b>cola &gt;150d</b>, no el flujo (núcleo sano 41–72d).</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Lotes en riesgo</div>
+      <div class="note" style="margin-top:0;margin-bottom:8px;">
+        <b>Conecta el Google Sheet para poblar esta lista automáticamente.</b> Por ahora trae los lotes documentados en el análisis; puedes agregar más a mano. Estado: <span class="st-badge st-bad">crítico</span> &gt;270d · <span class="st-badge st-warn">riesgo</span> &gt;150d · <span class="st-badge st-ok">ok</span> ≤150d.
+      </div>
+      <table class="lots risk">
+        <thead><tr>
+          <th style="width:12%">Región</th><th style="width:30%">Lote</th>
+          <th style="width:14%">Días</th><th style="width:14%">Kg</th><th style="width:16%">Valor $</th><th style="width:14%">Estado</th>
+        </tr></thead>
+        <tbody id="riskBody"></tbody>
+      </table>
+      <div class="actions" style="justify-content:space-between;">
+        <button class="addrow" id="addRisk">+ Agregar lote</button>
+        <span class="note" style="margin:0;">Total en riesgo (&gt;150d): <b class="num" id="riskTotal">$0</b> · <span id="riskCount">0</span> lote(s)</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -438,10 +498,10 @@ const PW=.6, PR=.2, PV=.2, ACC=2, CAP=1.5, AP=.7, FT=.85, SH=.5, MMIN=.18;
 // rot3M/rot6M = target rotación (glide path); vejMeta = target vejez;
 // movMensualKg = base del piso X; *Hoy/invSpot/lotesViejos = snapshot real de la región.
 const REGIONES = {
-  USA:  { label:'USA',           rot3M:95, rot6M:85, vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19 },
-  EU:   { label:'EU (incl. UK)', rot3M:75, rot6M:75, vejMeta:70, movMensualKg:24474, rotHoy:87,  vejHoy:90,  invSpotKg:15102, lotesViejos:13 },
-  AU:   { label:'AU',            rot3M:70, rot6M:70, vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:0  },
-  MENA: { label:'MENA (Dubai)',  rot3M:60, rot6M:60, vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6  }
+  USA:  { label:'USA',           rot3M:95, rot6M:85, vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19, vejNucleo:72, pctKg150:34, dolar150k:63.0, coberturaM:0.3 },
+  EU:   { label:'EU (incl. UK)', rot3M:75, rot6M:75, vejMeta:70, movMensualKg:24474, rotHoy:87,  vejHoy:90,  invSpotKg:15102, lotesViejos:13, vejNucleo:53, pctKg150:20, dolar150k:50.2, coberturaM:0.6 },
+  AU:   { label:'AU',            rot3M:70, rot6M:70, vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:null, vejNucleo:70, pctKg150:32, dolar150k:50.4, coberturaM:0.6 },
+  MENA: { label:'MENA (Dubai)',  rot3M:60, rot6M:60, vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6,  vejNucleo:41, pctKg150:39, dolar150k:61.3, coberturaM:1.2 }
 };
 const HORIZ_6M = {'Q1-2027':1, 'Q2-2027':1}; // estos horizontes usan target 6M; el resto 3M
 const K_DEFAULT = 0.33;
@@ -717,7 +777,7 @@ function applyRegion(resetReals){
     $('rotReal').value=R.rotHoy;
     $('vejReal').value=R.vejHoy;
     $('invDisp').value=R.invSpotKg;
-    $('lotes').value=R.lotesViejos;
+    $('lotes').value=R.lotesViejos||0;
   }
   // glide note
   const gn=$('glideNote');
@@ -741,6 +801,65 @@ function renderTargets(){
       '</td><td>'+fmtKg(R.movMensualKg)+'</td><td>'+fmtKg(X)+'</td>';
     b.appendChild(tr);
   });
+}
+
+// ── Status equipo (tab 3) ────────────────────────────────────
+function semaf(hoy,target){ const r=hoy/target; return r<=1.0?'ok':(r<=1.15?'warn':'bad'); }
+function renderStatus(){
+  const keys=Object.keys(REGIONES);
+  let totalRiesgo=0, peorVej=null, peorRot=null, rojas=0;
+  keys.forEach(k=>{
+    const R=REGIONES[k];
+    totalRiesgo+=R.dolar150k*1000;
+    if(!peorVej || R.vejHoy/R.vejMeta>peorVej.r) peorVej={R,r:R.vejHoy/R.vejMeta};
+    if(!peorRot || R.rotHoy/R.rot3M>peorRot.r) peorRot={R,r:R.rotHoy/R.rot3M};
+    if(R.rotHoy/R.rot3M>1.15 || R.vejHoy/R.vejMeta>1.15) rojas++;
+  });
+  const short=R=>R.label.split(' ')[0];
+  $('stRiesgo').textContent='$'+Math.round(totalRiesgo/1000)+'k';
+  $('stPeorVej').textContent=short(peorVej.R)+' '+peorVej.R.vejHoy+'d';
+  $('stPeorVejSub').textContent='target '+peorVej.R.vejMeta+'d';
+  $('stPeorRot').textContent=short(peorRot.R)+' '+peorRot.R.rotHoy+'d';
+  $('stPeorRotSub').textContent='target '+peorRot.R.rot3M+'d';
+  $('stRojas').textContent=rojas+' / '+keys.length;
+  const b=$('stBody'); b.innerHTML='';
+  keys.forEach(k=>{
+    const R=REGIONES[k], rs=semaf(R.rotHoy,R.rot3M), vs=semaf(R.vejHoy,R.vejMeta);
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><b>'+R.label+'</b></td>'+
+      '<td class="num"><span class="dot '+rs+'"></span>'+R.rotHoy+'d</td><td class="num">'+R.rot3M+'d</td>'+
+      '<td class="num"><span class="dot '+vs+'"></span>'+R.vejHoy+'d</td><td class="num">'+R.vejMeta+'d</td>'+
+      '<td class="num">'+R.coberturaM+'m</td><td class="num">'+R.pctKg150+'%</td><td class="num">$'+R.dolar150k+'k</td>';
+    b.appendChild(tr);
+  });
+}
+// Lotes en riesgo (semilla: casos documentados en el análisis)
+const LOTS_RISK0=[
+  {region:'AU', lote:'Java Koji', dias:436, kg:0, val:0},
+  {region:'AU', lote:'Caturra Syrup', dias:355, kg:0, val:0}
+];
+function estadoOf(d){ return d>270?{t:'crítico',c:'st-bad'}:(d>150?{t:'riesgo',c:'st-warn'}:{t:'ok',c:'st-ok'}); }
+function riskRow(l){
+  const tr=document.createElement('tr');
+  const opts=Object.keys(REGIONES).map(k=>'<option value="'+k+'"'+(k===l.region?' selected':'')+'>'+k+'</option>').join('');
+  tr.innerHTML='<td><select class="rr-reg">'+opts+'</select></td>'+
+    '<td><input class="rr-lote" value="'+l.lote+'"></td>'+
+    '<td><input type="number" class="rr-dias" value="'+l.dias+'" min="0" step="1"></td>'+
+    '<td><input type="number" class="rr-kg" value="'+l.kg+'" min="0" step="100"></td>'+
+    '<td><input type="number" class="rr-val" value="'+l.val+'" min="0" step="100"></td>'+
+    '<td class="rr-estado"></td>';
+  return tr;
+}
+function renderRisk(){ const b=$('riskBody'); b.innerHTML=''; LOTS_RISK0.forEach(l=>b.appendChild(riskRow(l))); calcRisk(); }
+function calcRisk(){
+  let total=0,count=0;
+  [...$('riskBody').querySelectorAll('tr')].forEach(tr=>{
+    const d=+tr.querySelector('.rr-dias').value||0, v=+tr.querySelector('.rr-val').value||0, e=estadoOf(d);
+    tr.querySelector('.rr-estado').innerHTML='<span class="st-badge '+e.c+'">'+e.t+'</span> <button class="rm" title="Quitar">×</button>';
+    if(d>150){ total+=v; count++; }
+  });
+  $('riskTotal').textContent='$'+Math.round(total).toLocaleString('en-US');
+  $('riskCount').textContent=count;
 }
 
 function recalc(){ update(); calc2(); renderTargets(); }
@@ -790,12 +909,18 @@ $('addRow').addEventListener('click',()=>{
   $('lotBody').appendChild(lotRow({kg:10000,dias:40,estado:'disponible'}));
   calc2();
 });
+$('riskBody').addEventListener('input',calcRisk);
+$('riskBody').addEventListener('change',calcRisk);
+$('riskBody').addEventListener('click',e=>{ if(e.target.classList.contains('rm')){ e.target.closest('tr').remove(); calcRisk(); } });
+$('addRisk').addEventListener('click',()=>{ $('riskBody').appendChild(riskRow({region:'USA',lote:'',dias:0,kg:0,val:0})); calcRisk(); });
 syncPair('movMensual','movMensual2');
 syncPair('kPct','kPct2');
 syncPair('rotMeta','rotMeta2');
 syncPair('vejMeta','vejMeta2');
 
 renderLots();
+renderStatus();
+renderRisk();
 applyRegion(true);   // carga USA (target 3M) al abrir
 recalc();
 </script>
