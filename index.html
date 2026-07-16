@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forest Coffee — Simulador Modelo Spot v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Forest Design System v1.0 — tokens ─────────────────────────── */
+:root{
+  --fc-yellow:#e7e244; --fc-blue:#95b5ce; --fc-navy:#1b203d; --fc-navy-dark:#0f1226;
+  --fc-ink:#0c0c0b; --fc-paper:#ffffff;
+  --fc-yellow-100:#fbf9d3; --fc-yellow-600:#c9c422;
+  --fc-blue-100:#e6eef5; --fc-blue-200:#c7d8e6; --fc-blue-700:#5b85a3;
+  --fc-ink-100:#e8e8e2; --fc-ink-200:#c9c9c2; --fc-ink-300:#9a9a93; --fc-ink-500:#5a5a55;
+  --fc-cream:#f5f4ee;
+  --fc-success:#4d7c2f; --fc-warning:#c47820; --fc-danger:#a8351c;
+  --fc-font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fc-font-body:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --fc-font-mono:"DM Mono","JetBrains Mono",ui-monospace,Menlo,monospace;
+  --fc-ls-display:0.18em; --fc-ls-eyebrow:0.32em; --fc-ls-loose:0.04em; --fc-ls-tight:-0.01em;
+  --fc-radius-2:6px; --fc-radius-3:10px; --fc-radius-4:12px; --fc-radius-pill:999px;
+  --fc-shadow-2:0 2px 8px rgba(12,12,11,.08);
+  --fc-ease-out:cubic-bezier(0.22,1,0.36,1); --fc-dur-fast:150ms;
+  --fc-on-navy-2:rgba(255,255,255,.78); --fc-on-navy-3:rgba(255,255,255,.62);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fc-font-body);font-size:16px;line-height:1.5;color:var(--fc-ink);background:var(--fc-cream);-webkit-font-smoothing:antialiased;padding:32px 24px;}
+.wrap{max-width:1080px;margin:0 auto;}
+
+/* header */
+.eyebrow{font-family:var(--fc-font-body);font-weight:600;font-size:10px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);}
+h1{font-family:var(--fc-font-display);font-weight:700;font-size:24px;line-height:1.2;letter-spacing:var(--fc-ls-display);text-transform:uppercase;color:var(--fc-navy);margin:6px 0 2px;}
+.sub{font-size:12px;color:var(--fc-ink-500);letter-spacing:var(--fc-ls-loose);margin-bottom:28px;}
+
+/* layout */
+.grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;}
+@media(max-width:860px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-3);padding:22px;}
+.card-label{font-family:var(--fc-font-display);font-weight:700;font-size:10px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:16px;}
+
+/* inputs */
+label{display:block;font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);margin:18px 0 6px;}
+label:first-of-type{margin-top:0;}
+.val{float:right;font-family:var(--fc-font-mono);font-weight:500;font-size:12px;letter-spacing:var(--fc-ls-tight);color:var(--fc-navy);text-transform:none;letter-spacing:0;}
+select,input[type=number]{width:100%;padding:8px 10px;border:1px solid var(--fc-ink-200);border-radius:var(--fc-radius-2);font-family:var(--fc-font-mono);font-size:13px;background:var(--fc-paper);color:var(--fc-ink);transition:border-color var(--fc-dur-fast) var(--fc-ease-out);}
+select{font-family:var(--fc-font-body);font-size:12.5px;font-weight:500;}
+select:focus,input:focus{outline:none;border-color:var(--fc-navy);box-shadow:0 0 0 2px rgba(27,32,61,.12);}
+input[type=range]{width:100%;accent-color:var(--fc-navy);margin-top:2px;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.mini{display:block;font-size:10px;font-weight:500;color:var(--fc-ink-300);letter-spacing:var(--fc-ls-loose);margin-bottom:3px;}
+.note{font-size:10.5px;color:var(--fc-ink-500);line-height:1.55;margin-top:8px;}
+.gmc-box{background:var(--fc-cream);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-2);padding:10px 12px;display:flex;justify-content:space-between;align-items:baseline;}
+.gmc-box .n{font-family:var(--fc-font-mono);font-weight:500;font-size:18px;letter-spacing:var(--fc-ls-tight);color:var(--fc-navy);}
+.gmc-box .l{font-size:9px;font-weight:600;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);}
+
+/* hero row */
+.hero-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px;margin-bottom:14px;}
+@media(max-width:767px){.hero-row{grid-template-columns:1fr;}}
+.hero{background:var(--fc-navy);border-radius:var(--fc-radius-4);color:#fff;padding:26px 30px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle at top right,rgba(231,226,68,.10),transparent 70%);pointer-events:none;}
+.hero-label{font-family:var(--fc-font-display);font-weight:700;font-size:10px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-on-navy-3);margin-bottom:10px;}
+.hero-big{font-family:var(--fc-font-display);font-weight:800;font-size:52px;line-height:.95;letter-spacing:var(--fc-ls-tight);color:var(--fc-yellow);}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:var(--fc-radius-pill);padding:5px 12px;font-family:var(--fc-font-mono);font-size:10.5px;font-weight:500;color:var(--fc-on-navy-2);}
+.side{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-left:3px solid var(--fc-ink-200);border-radius:var(--fc-radius-4);padding:24px;display:flex;flex-direction:column;justify-content:center;}
+.side.is-ok{border-left-color:var(--fc-success);}
+.side.is-crit{border-left-color:var(--fc-danger);}
+.side .hero-label{color:var(--fc-ink-500);}
+.side-big{font-family:var(--fc-font-display);font-weight:800;font-size:34px;line-height:1;letter-spacing:var(--fc-ls-tight);color:var(--fc-navy);margin-bottom:6px;}
+.side.is-ok .side-big{color:var(--fc-success);}
+.side.is-crit .side-big{color:var(--fc-danger);}
+.side-sub{font-size:10.5px;color:var(--fc-ink-500);}
+.side-sub .fc-num{font-family:var(--fc-font-mono);}
+
+/* strip */
+.strip{display:grid;grid-template-columns:repeat(5,1fr);background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-3);overflow:hidden;margin-bottom:14px;}
+.cell{padding:16px 18px;border-right:1px solid var(--fc-ink-100);}
+.cell:last-child{border-right:none;}
+.cell.featured{background:var(--fc-navy);color:#fff;}
+.cell-label{font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:8px;}
+.cell.featured .cell-label{color:var(--fc-on-navy-3);}
+.cell-value{font-family:var(--fc-font-mono);font-weight:500;font-size:19px;letter-spacing:var(--fc-ls-tight);color:var(--fc-ink);line-height:1.1;}
+.cell.featured .cell-value{color:var(--fc-yellow);font-size:21px;}
+.cell-sub{font-size:10px;color:var(--fc-ink-500);margin-top:4px;}
+.cell.featured .cell-sub{color:var(--fc-on-navy-3);}
+@media(max-width:767px){.strip{grid-template-columns:1fr 1fr;}.cell{border-right:none;border-bottom:1px solid var(--fc-ink-100);}.cell:last-child{grid-column:1/-1;border-bottom:none;}}
+
+/* alerts (lavender blue) */
+.alert{background:var(--fc-blue-100);border:1px solid var(--fc-blue-200);border-left:3px solid var(--fc-warning);border-radius:var(--fc-radius-3);padding:11px 14px;display:none;align-items:center;gap:12px;margin-bottom:10px;}
+.alert.critical{border-left-color:var(--fc-danger);}
+.alert.info{border-left-color:var(--fc-blue-700);}
+.alert-ico{width:28px;height:28px;border-radius:var(--fc-radius-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(196,120,32,.18);color:#9c5e15;}
+.alert.critical .alert-ico{background:rgba(168,53,28,.15);color:var(--fc-danger);}
+.alert.info .alert-ico{background:rgba(91,133,163,.15);color:var(--fc-blue-700);}
+.alert-ico svg{width:15px;height:15px;stroke-width:2;}
+.alert-txt{font-size:12px;font-weight:500;color:var(--fc-navy);line-height:1.4;}
+
+/* chart */
+canvas{width:100%;height:210px;margin-top:6px;}
+.caption{font-size:10.5px;color:var(--fc-ink-500);line-height:1.55;margin-top:10px;}
+.legend{display:flex;gap:16px;margin-top:10px;font-size:10.5px;color:var(--fc-ink-500);}
+.legend span{display:inline-flex;align-items:center;gap:6px;}
+.sw{display:inline-block;width:18px;height:0;border-top:2.5px solid var(--fc-navy);}
+.sw.old{border-top:2px dashed var(--fc-ink-300);}
+.sw.dot{width:8px;height:8px;border:none;border-radius:50%;background:var(--fc-yellow);outline:2px solid var(--fc-navy);}
+
+.rules{font-size:10.5px;color:var(--fc-ink-500);line-height:1.6;margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Forest Coffee · Compensación Comercial</div>
+  <h1>Simulador Modelo Spot v2</h1>
+  <div class="sub">Multiplicador interpolado · Acelerador topado · Rotación y vejez en días · Jul 2026</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Inputs del mes</div>
+
+      <label>Posición</label>
+      <select id="pos">
+        <option value="0">Jr Account Manager</option>
+        <option value="1" selected>Sr Account Manager</option>
+        <option value="2">Regional Account Manager</option>
+        <option value="3">Global Account Manager</option>
+      </select>
+
+      <label>Ingresos (revenue) <span class="val" id="vCum">100%</span></label>
+      <div class="two">
+        <div><span class="mini">Meta del mes (USD)</span><input type="number" id="revMeta" value="250000" min="0" step="5000"></div>
+        <div><span class="mini">Ventas reales (USD)</span><input type="number" id="revReal" value="250000" min="0" step="5000"></div>
+      </div>
+
+      <label>Margen de contribución <span class="val" id="vMg">28.0%</span></label>
+      <input type="range" id="mg" min="10" max="50" value="28" step="0.1">
+
+      <label>GMC del mes (calculado)</label>
+      <div class="gmc-box"><span class="l">Ventas × Margen</span><span class="n" id="vGmc">$0</span></div>
+
+      <label>Rotación — prom. región 90 días <span class="val" id="vRot">90%</span></label>
+      <div class="two">
+        <div><span class="mini">Meta (días)</span><input type="number" id="rotMeta" value="60" min="1" step="1"></div>
+        <div><span class="mini">Real al cierre (días)</span><input type="number" id="rotReal" value="67" min="1" step="1"></div>
+      </div>
+      <div style="margin-top:8px;"><span class="mini">Lotes disponibles &gt;150 días de vejez (+2 días c/u)</span><input type="number" id="lotes" value="0" min="0" step="1"></div>
+
+      <label>Vejez cafés disponibles — cierre de mes <span class="val" id="vVej">90%</span></label>
+      <div class="two">
+        <div><span class="mini">Meta (días)</span><input type="number" id="vejMeta" value="45" min="1" step="1"></div>
+        <div><span class="mini">Real (días)</span><input type="number" id="vejReal" value="50" min="1" step="1"></div>
+      </div>
+      <div class="note">Menos días = mejor. Cada día de mejora vs meta acelera ×1.5; peso máximo por componente: 30% (vs 20% base).</div>
+    </div>
+
+    <div>
+      <div class="hero-row">
+        <div class="hero">
+          <div class="hero-label">Bono del mes — Modelo Nuevo v2</div>
+          <div class="hero-big" id="bonoN">$0</div>
+          <div class="hero-pills">
+            <span class="pill" id="pGmc">GMC $0</span>
+            <span class="pill" id="pBase">Base 0%</span>
+            <span class="pill" id="pMult">Mult 0%</span>
+          </div>
+        </div>
+        <div class="side" id="sideCard">
+          <div class="hero-label">vs Modelo Anterior</div>
+          <div class="side-big" id="delta">$0</div>
+          <div class="side-sub">Modelo anterior: <span class="fc-num" id="bonoO">$0</span></div>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value" id="cIng">–</div><div class="cell-sub">peso 60% · apertura 70% · acel. ×2 hasta 150%</div></div>
+        <div class="cell"><div class="cell-label">Rotación</div><div class="cell-value" id="cRot">–</div><div class="cell-sub">peso 20% · acel. ×1.5 · máx 30%</div></div>
+        <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value" id="cVej">–</div><div class="cell-sub">peso 20% · acel. ×1.5 · máx 30%</div></div>
+        <div class="cell"><div class="cell-label">Base total</div><div class="cell-value" id="cBase">–</div><div class="cell-sub">suma de componentes</div></div>
+        <div class="cell featured"><div class="cell-label">Bono</div><div class="cell-value" id="cBono">–</div><div class="cell-sub">GMC × Base × Mult <span id="cMult"></span></div></div>
+      </div>
+
+      <div class="alert critical" id="warnMg"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt">Margen inferior al mínimo (18%): el bono del mes es $0.</div></div>
+      <div class="alert critical" id="warnAp"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt">Cumplimiento por debajo de la apertura (70%): el componente de ingresos es 0.</div></div>
+      <div class="alert" id="warnTr"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Tramo reducido (70–85%): se paga el 50% del valor del componente de ingresos a 85%.</div></div>
+      <div class="alert info" id="warnCap"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Acelerador ×2 aplica hasta 150%; el excedente cuenta normal (×1).</div></div>
+      <div class="alert info" id="warnLot"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnLotTxt"></div></div>
+
+      <div class="card">
+        <div class="card-label">Multiplicador vs Margen — posición seleccionada</div>
+        <canvas id="chart" width="640" height="210"></canvas>
+        <div class="legend">
+          <span><span class="sw"></span> Modelo nuevo (interpolado)</span>
+          <span><span class="sw old"></span> Modelo anterior (escalones)</span>
+          <span><span class="sw dot"></span> Tu margen actual</span>
+        </div>
+        <div class="caption">Techo de cada bracket = inicio del siguiente − 0.2 pts. Plano de 46% en adelante.</div>
+      </div>
+
+      <div class="rules">
+        Reglas v2: Base = Ingresos×60% + Rotación×20% + Vejez×20%. Componente de ingresos: 0 si cumplimiento &lt; 70%; entre 70% y 85% se paga el 50% del valor a 85% (25.5% de base); de 85% en adelante lineal; por encima de 100% acelerador ×2 por punto hasta 150%; el excedente sobre 150% cuenta normal (×1). GMC = ventas reales × margen. Rotación = promedio por región de los últimos 90 días; Vejez = ponderada al cierre de mes de los cafés disponibles; ambas en días (menos = mejor). Peor que meta: cumplimiento = meta ÷ real. Mejor que meta: cada día de mejora acelera ×1.5, con peso máximo de 30% por componente. Cada lote disponible con &gt;150 días de vejez suma 2 días a la rotación al cierre. Margen &lt; 18% ⇒ bono $0. El pago sigue sujeto a cascada (proporcional a cartera cobrada). Modelo anterior (comparación): ingresos = 0 si cumplimiento &lt; 85%; acelerador ×2 sin tope; multiplicador por escalones; rotación/vejez sin acelerador ni regla de lotes.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BRK=[
+  {min:.18, max:.2599, base:[.048,.052,.054,.056]},
+  {min:.26, max:.3099, base:[.058,.062,.064,.066]},
+  {min:.31, max:.3599, base:[.078,.082,.084,.086]},
+  {min:.36, max:.4099, base:[.088,.092,.094,.096]},
+  {min:.41, max:.4599, base:[.108,.112,.114,.116]},
+  {min:.46, max:9.99,  base:[.118,.122,.124,.126]}
+];
+const PW=.6, PR=.2, PV=.2, ACC=2, CAP=1.5, AP=.7, FT=.85, SH=.5, MMIN=.18;
+
+function multOld(mg,p){
+  if(mg<MMIN) return 0;
+  for(const b of BRK) if(mg>=b.min && mg<=b.max) return b.base[p];
+  return BRK[5].base[p];
+}
+function multNew(mg,p){
+  if(mg<MMIN) return 0;
+  for(let i=0;i<BRK.length;i++){
+    const b=BRK[i];
+    if(mg>=b.min && mg<=b.max){
+      if(i===BRK.length-1) return b.base[p];           // plano 46%+
+      const techo=BRK[i+1].base[p]-0.002;              // siguiente − 0.2 pts
+      return b.base[p]+(mg-b.min)/(b.max-b.min)*(techo-b.base[p]);
+    }
+  }
+  return BRK[5].base[p];
+}
+function ingOld(c){ if(c<FT) return 0; return Math.min(c,1)*PW + Math.max(c-1,0)*ACC*PW; }
+function ingNew(c){
+  if(c<AP) return 0;
+  if(c<FT) return SH*FT*PW;
+  return Math.min(c,1)*PW + Math.max(Math.min(c,CAP)-1,0)*ACC*PW + Math.max(c-CAP,0)*PW;
+}
+const $=id=>document.getElementById(id);
+const fmt$=v=>'$'+Math.round(v).toLocaleString('en-US');
+const fmtP=(v,d=1)=>(v*100).toFixed(d)+'%';
+
+function draw(p, mgNow){
+  const cv=$('chart'), ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height, L=42, B=H-24, T=10, R=W-10;
+  ctx.clearRect(0,0,W,H);
+  const x=mg=>L+(mg-.16)/(.50-.16)*(R-L);
+  const y=m=>B-(m-0)/(0.135)*(B-T);
+  ctx.strokeStyle='#e8e8e2'; ctx.fillStyle='#9a9a93'; ctx.font='10px "DM Mono",monospace'; ctx.textAlign='center';
+  for(let g=.18; g<=.50; g+=.04){
+    ctx.beginPath(); ctx.moveTo(x(g),T); ctx.lineTo(x(g),B); ctx.stroke();
+    ctx.fillText((g*100).toFixed(0)+'%', x(g), H-8);
+  }
+  ctx.textAlign='right';
+  for(let m=0;m<=.13;m+=.03){
+    ctx.fillText((m*100).toFixed(0)+'%', L-5, y(m)+3);
+  }
+  // modelo anterior (escalones)
+  ctx.strokeStyle='#9a9a93'; ctx.setLineDash([4,3]); ctx.lineWidth=1.5; ctx.beginPath();
+  let first=true;
+  for(let mg=.16; mg<=.50; mg+=.001){
+    const m=multOld(mg,p);
+    if(first){ctx.moveTo(x(mg),y(m)); first=false;} else ctx.lineTo(x(mg),y(m));
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  // modelo nuevo
+  ctx.strokeStyle='#1b203d'; ctx.lineWidth=2.5; ctx.beginPath(); first=true;
+  for(let mg=.16; mg<=.50; mg+=.001){
+    const m=multNew(mg,p);
+    if(first){ctx.moveTo(x(mg),y(m)); first=false;} else ctx.lineTo(x(mg),y(m));
+  }
+  ctx.stroke();
+  // punto actual
+  ctx.fillStyle='#e7e244'; ctx.strokeStyle='#1b203d'; ctx.lineWidth=2; ctx.beginPath();
+  ctx.arc(x(mgNow), y(multNew(mgNow,p)), 5, 0, 7); ctx.fill(); ctx.stroke();
+}
+
+function update(){
+  const p=+$('pos').value, mg=+$('mg').value/100;
+  const revM=+$('revMeta').value||0, revR=+$('revReal').value||0;
+  const cum=revM>0?revR/revM:0;
+  const gmc=revR*mg;   // GMC = revenue real × margen
+  const rM=+$('rotMeta').value||0, rR=+$('rotReal').value||0;
+  const vM=+$('vejMeta').value||0, vR=+$('vejReal').value||0;
+  const lot=+$('lotes').value||0;
+  const rRA=rR>0?rR+2*lot:0;   // lotes >150 días suman 2 días c/u a rotación
+  // Cumplimiento días: peor que meta = meta/real; mejor que meta = acelerador ×1.5 por día, tope 150% (peso máx 30%)
+  const comp=(m,r)=>{ if(m<=0||r<=0) return 0; return r>=m ? m/r : Math.min(1+(m-r)/m*1.5, 1.5); };
+  const rot=comp(rM,rRA), vej=comp(vM,vR);
+  // Modelo anterior: sin acelerador, sin regla de lotes, topado en 100%
+  const rotO=rR>0?Math.min(rM/rR,1):0, vejO=vR>0?Math.min(vM/vR,1):0;
+
+  $('vCum').textContent=fmtP(cum,0); $('vMg').textContent=fmtP(mg);
+  $('vGmc').textContent=fmt$(gmc);
+  $('vRot').textContent=fmtP(rot,0); $('vVej').textContent=fmtP(vej,0);
+
+  const ing=ingNew(cum), baseN=ing+rot*PR+vej*PV, mN=multNew(mg,p);
+  const bonoN=gmc*baseN*mN;
+  const baseO=ingOld(cum)+rotO*PR+vejO*PV, mO=multOld(mg,p);
+  const bonoO=gmc*baseO*mO;
+
+  $('bonoN').textContent=fmt$(bonoN);
+  $('pGmc').textContent='GMC '+fmt$(gmc);
+  $('pBase').textContent='Base '+fmtP(baseN);
+  $('pMult').textContent='Mult '+fmtP(mN,2);
+  $('cIng').textContent=fmtP(ing); $('cRot').textContent=fmtP(rot*PR); $('cVej').textContent=fmtP(vej*PV);
+  $('cBase').textContent=fmtP(baseN); $('cMult').textContent=fmtP(mN,2); $('cBono').textContent=fmt$(bonoN);
+  $('bonoO').textContent=fmt$(bonoO);
+
+  const d=bonoN-bonoO, sc=$('sideCard');
+  $('delta').textContent=(d>=0?'+':'−')+fmt$(Math.abs(d)).slice(0);
+  sc.classList.toggle('is-ok', d>=0);
+  sc.classList.toggle('is-crit', d<0);
+
+  $('warnMg').style.display = mg<MMIN?'flex':'none';
+  $('warnAp').style.display = (mg>=MMIN && cum<AP)?'flex':'none';
+  $('warnTr').style.display = (mg>=MMIN && cum>=AP && cum<FT)?'flex':'none';
+  $('warnCap').style.display = cum>CAP?'flex':'none';
+  if(lot>0){ $('warnLot').style.display='flex'; $('warnLotTxt').textContent=lot+' lote(s) >150 días suman '+(2*lot)+' días a rotación: real ajustado '+rRA+' días.'; }
+  else $('warnLot').style.display='none';
+
+  draw(p, mg);
+}
+['pos','revMeta','revReal','mg','rotMeta','rotReal','lotes','vejMeta','vejReal'].forEach(id=>{
+  $(id).addEventListener('input',update);
+});
+update();
+</script>
+</body>
+</html>
