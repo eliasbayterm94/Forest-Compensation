@@ -135,6 +135,48 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .formula .gloss{font-size:11.5px;line-height:1.6;color:var(--fc-on-navy-2);}
 .formula .gloss b{color:#fff;font-weight:600;}
 
+/* tarjetas "en cristiano" (C) */
+.plain{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-3);padding:20px 22px;}
+.plain-h{font-family:var(--fc-font-display);font-weight:700;font-size:13px;letter-spacing:var(--fc-ls-loose);text-transform:uppercase;color:var(--fc-navy);margin-bottom:3px;}
+.plain-h .plain-tag{float:right;font-family:var(--fc-font-mono);font-weight:500;font-size:9.5px;letter-spacing:0;text-transform:none;color:var(--fc-ink-300);padding-top:3px;}
+.plain-lead{font-size:13px;color:var(--fc-ink-500);margin-bottom:14px;}
+.plain-lead b{color:var(--fc-navy);}
+.qa{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:start;}
+.qa .q{font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);white-space:nowrap;padding:2px 0 0 13px;position:relative;}
+.qa .q::before{content:'';position:absolute;left:0;top:5px;width:6px;height:6px;border-radius:50%;background:var(--fc-ink-200);}
+.qa .q.up::before{background:var(--fc-success);}
+.qa .q.down::before{background:var(--fc-danger);}
+.qa .a{font-size:11.5px;line-height:1.5;color:var(--fc-ink-500);}
+.qa .a b{color:var(--fc-navy);font-weight:600;}
+.fx{margin-top:14px;border-top:1px solid var(--fc-ink-100);padding-top:10px;}
+.fx summary{font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-300);cursor:pointer;list-style:none;}
+.fx summary::-webkit-details-marker{display:none;}
+.fx summary:hover{color:var(--fc-navy);}
+.fx-eq{font-family:var(--fc-font-mono);font-size:11.5px;color:var(--fc-navy);background:var(--fc-cream);border-radius:var(--fc-radius-2);padding:9px 11px;margin-top:8px;overflow-x:auto;}
+
+/* ejemplo paso a paso (B) */
+.stepper{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:center;min-height:140px;}
+@media(max-width:640px){.stepper{grid-template-columns:1fr;}}
+.step-title{font-family:var(--fc-font-display);font-weight:700;font-size:14px;color:var(--fc-navy);margin-bottom:7px;}
+.step-txt{font-size:12.5px;line-height:1.6;color:var(--fc-ink-500);}
+.step-txt b{color:var(--fc-navy);}
+.step-nav{display:flex;align-items:center;justify-content:space-between;margin-top:16px;border-top:1px solid var(--fc-ink-100);padding-top:14px;}
+.step-btn{appearance:none;border:1px solid var(--fc-ink-200);background:var(--fc-paper);color:var(--fc-navy);font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;padding:9px 15px;border-radius:var(--fc-radius-2);cursor:pointer;}
+.step-btn:hover:not(:disabled){border-color:var(--fc-navy);}
+.step-btn.primary{background:var(--fc-navy);color:#fff;border-color:var(--fc-navy);}
+.step-btn:disabled{opacity:.35;cursor:default;}
+.step-dots{display:flex;gap:6px;}
+.step-dots i{width:7px;height:7px;border-radius:50%;background:var(--fc-ink-200);display:inline-block;}
+.step-dots i.on{background:var(--fc-navy);}
+.wh{border:1px solid var(--fc-ink-200);border-radius:var(--fc-radius-2);padding:12px;background:var(--fc-cream);}
+.wh-bar{display:flex;height:46px;border-radius:var(--fc-radius-2);overflow:hidden;background:var(--fc-ink-100);}
+.wh-seg{display:flex;align-items:center;justify-content:center;font-family:var(--fc-font-mono);font-size:10px;color:#fff;text-align:center;padding:0 4px;transition:width .35s var(--fc-ease-out);}
+.wh-rot{background:var(--fc-blue-700);}
+.wh-disp{background:var(--fc-navy);}
+.wh-old{background:var(--fc-danger);}
+.wh-res{background:var(--fc-ink-300);color:var(--fc-ink);}
+.wh-labels{display:flex;justify-content:space-between;font-size:9.5px;color:var(--fc-ink-500);margin-top:8px;}
+
 .lots{width:100%;border-collapse:collapse;margin-top:6px;}
 .lots th{font-family:var(--fc-font-display);font-weight:700;font-size:8.5px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);text-align:left;padding:6px 8px;border-bottom:1px solid var(--fc-ink-100);}
 .lots td{padding:4px 6px;border-bottom:1px solid var(--fc-ink-100);vertical-align:middle;}
@@ -355,21 +397,42 @@ canvas{width:100%;height:210px;margin-top:6px;}
     </p>
 
     <div class="explain">
-      <div class="formula">
-        <div class="ttl">Rotación · rolling 90 días</div>
-        <div class="eq">
-          Rotación =
-          <span class="frac"><span class="num">Σ ( kg rotados × días hasta rotar )</span><span class="den">Σ kg rotados en los 90 días</span></span>
+      <div class="plain">
+        <div class="plain-h">Rotación <span class="plain-tag">peso 20% · hasta 30% si aceleras</span></div>
+        <div class="plain-lead">Qué tan <b>rápido sale</b> el café de la bodega.</div>
+        <div class="qa">
+          <div class="q">¿Qué mide?</div><div class="a">Los días promedio (ponderados por kg) desde que el lote se <b>factura</b>, mirando los <b>últimos 90 días</b>. Menos días = mejor.</div>
+          <div class="q up">¿Qué la mejora?</div><div class="a">Rotar/facturar rápido. Si bajas de la meta, <b>acelera ×1.5</b> — bonifica.</div>
+          <div class="q down">¿Qué la castiga?</div><div class="a">Lotes sin rotar. Cada lote <b>disponible &gt;150 días</b> suma +2 días. Peor que meta = meta ÷ real.</div>
+          <div class="q">¿Cómo pega a mi bono?</div><div class="a">Es el <b>20%</b> de la base; puede subir a 30% si superas la meta.</div>
         </div>
-        <div class="gloss">Promedio de días que tardó en salir cada kilo, <b>ponderado por kilos</b>. Corre como ventana móvil de 90 días. <b>Menos días = mejor.</b> Es la palanca que el comercial <b>sí</b> mueve, por eso acelera ×1.5 cuando supera la meta.</div>
+        <details class="fx"><summary>Ver fórmula</summary><div class="fx-eq">Rotación = Σ(kg&nbsp;×&nbsp;días&nbsp;hasta&nbsp;rotar) ÷ Σ(kg&nbsp;rotados&nbsp;en&nbsp;90d)</div></details>
       </div>
-      <div class="formula">
-        <div class="ttl">Vejez · cierre de mes</div>
-        <div class="eq">
-          Vejez =
-          <span class="frac"><span class="num">Σ ( kg disponibles × días en bodega )</span><span class="den">Σ kg disponibles</span></span>
+      <div class="plain">
+        <div class="plain-h">Vejez <span class="plain-tag">peso 20% · solo castiga</span></div>
+        <div class="plain-lead">Qué tan <b>viejo</b> está lo que <b>sigue en bodega</b>.</div>
+        <div class="qa">
+          <div class="q">¿Qué mide?</div><div class="a">La edad promedio (ponderada por kg) del inventario <b>disponible</b>, al cierre de mes. Menos días = mejor.</div>
+          <div class="q up">¿Qué la mejora?</div><div class="a">Estar en meta o mejor paga <b>100%</b> — y ya. No bonifica (no es palanca del comercial).</div>
+          <div class="q down">¿Qué la castiga?</div><div class="a">Cargar inventario viejo disponible: peor que meta = meta ÷ real. Si el inventario &lt; <b>X</b>, no castiga.</div>
+          <div class="q">¿Cómo pega a mi bono?</div><div class="a">Es el <b>20%</b> de la base; solo puede restar, nunca sumar de más.</div>
         </div>
-        <div class="gloss">Edad promedio de lo que <b>sigue disponible</b>, ponderada por kilos. <b>Solo castiga:</b> si es mejor que la meta se paga 100%, nunca más. Y si el inventario disponible cae por debajo de <b>X</b> (mínimo operativo), no castiga — no es una palanca sobre colas de lotes.</div>
+        <details class="fx"><summary>Ver fórmula</summary><div class="fx-eq">Vejez = Σ(kg&nbsp;disponibles&nbsp;×&nbsp;días&nbsp;en&nbsp;bodega) ÷ Σ(kg&nbsp;disponibles)</div></details>
+      </div>
+    </div>
+
+    <div class="alert info" style="display:flex;margin-bottom:16px;"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Un lote <b>reservado</b> no cuenta ni en rotación ni en vejez — <b>pero</b> genera cargo de Finance &amp; Storage, así que igual toca rotarlo. Si la reserva se cae o está mal hecha, el lote <b>vuelve a contar</b> y termina castigando si no se rotó a tiempo.</div></div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-label">Ejemplo paso a paso</div>
+      <div class="stepper">
+        <div class="step-viz" id="stepViz"></div>
+        <div class="step-body"><div class="step-title" id="stepTitle"></div><div class="step-txt" id="stepTxt"></div></div>
+      </div>
+      <div class="step-nav">
+        <button class="step-btn" id="stepPrev">← Anterior</button>
+        <span class="step-dots" id="stepDots"></span>
+        <button class="step-btn primary" id="stepNext">Siguiente →</button>
       </div>
     </div>
 
@@ -387,7 +450,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <b>Justificación por región:</b><br>
         · <b>USA</b> — rotación se deterioró de 53d a 127d en 12 meses; glide path −15d/trimestre (95d en Q3–Q4 2026 → 85d desde Q1 2027). Liquidar los 19 lotes &gt;150d baja ~38d de golpe.<br>
         · <b>EU (Vollers)</b> — bodega sana: rotación 90d en 66d, promedio anual 74d. Target 70 consolida. Antes escondida en el promedio EU combinado.<br>
-        · <b>UK</b> — bodega independiente en crisis: rotación 90d saltó a ~207d (estaba en 67–83d en sep–oct 2025). Glide path 150→120 exigente pero creíble dado que la capacidad existió. <i>Targets provisionales — confirmar.</i><br>
+        · <b>UK</b> — bodega independiente en crisis: rotación 90d saltó a ~207d (estaba en 67–83d en sep–oct 2025). Glide path 100d (Q3–Q4 2026) → 85d (2027), creíble dado que la capacidad existió.<br>
         · <b>AU</b> — rotación ya recuperada (~80d); vejez 144d inflada por la cola &gt;270d (21.5% del kg): target 90 obliga a liquidarla sin ser imposible.<br>
         · <b>MENA</b> — mejor rotación del grupo (67d); mantener disciplina y limpiar 6 lotes viejos ($61k, el mayor $ en riesgo relativo).
       </div>
@@ -474,7 +537,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         </tr></thead>
         <tbody id="stBody"></tbody>
       </table>
-      <div class="note"><b>Cobertura</b> = meses de venta que cubre el inventario disponible. Target de rotación = meta del trimestre vigente (USA glide 95→85, UK glide 150→120). La rotación de EU (Vollers) y UK es real del CSV por bodega. <b>*</b> vejez, % kg &gt;150d e inventario de EU (Vollers) y UK son <b>provisionales</b> (heredados de EU combinado); pendiente el split del inventario por bodega.</div>
+      <div class="note"><b>Cobertura</b> = meses de venta que cubre el inventario disponible. Target de rotación = meta del trimestre vigente (USA glide 95→85, UK glide 100→85). La rotación de EU (Vollers) y UK es real del CSV por bodega. <b>*</b> vejez, % kg &gt;150d e inventario de EU (Vollers) y UK son <b>provisionales</b> (heredados de EU combinado); pendiente el split del inventario por bodega.</div>
     </div>
 
     <div class="card">
@@ -507,7 +570,7 @@ const PW=.6, PR=.2, PV=.2, ACC=2, CAP=1.5, AP=.7, FT=.85, SH=.5, MMIN=.18;
 const REGIONES = {
   USA:  { label:'USA',          rot3M:95,  rot6M:85,  vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19,   vejNucleo:72, pctKg150:34, dolar150k:63.0, coberturaM:0.3 },
   EU:   { label:'EU (Vollers)', rot3M:70,  rot6M:70,  vejMeta:70, movMensualKg:19265, rotHoy:66,  vejHoy:90,  invSpotKg:11885, lotesViejos:null, vejNucleo:53, pctKg150:20, dolar150k:39.5, coberturaM:0.6, provVej:true },
-  UK:   { label:'UK',           rot3M:150, rot6M:120, vejMeta:70, movMensualKg:5208,  rotHoy:207, vejHoy:90,  invSpotKg:3217,  lotesViejos:null, vejNucleo:53, pctKg150:20, dolar150k:10.7, coberturaM:0.6, provVej:true },
+  UK:   { label:'UK',           rot3M:100, rot6M:85,  vejMeta:70, movMensualKg:5208,  rotHoy:207, vejHoy:90,  invSpotKg:3217,  lotesViejos:null, vejNucleo:53, pctKg150:20, dolar150k:10.7, coberturaM:0.6, provVej:true },
   AU:   { label:'AU',           rot3M:70,  rot6M:70,  vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:null, vejNucleo:70, pctKg150:32, dolar150k:50.4, coberturaM:0.6 },
   MENA: { label:'MENA (Dubai)', rot3M:60,  rot6M:60,  vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6,    vejNucleo:41, pctKg150:39, dolar150k:61.3, coberturaM:1.2 }
 };
@@ -821,6 +884,31 @@ function renderTargets(){
   });
 }
 
+// ── Ejemplo paso a paso (tab 2, opción B) ────────────────────
+const STEPS=[
+  {title:'1 · Entra el lote', txt:'Llega un lote de <b>20,000 kg</b> a bodega (fecha ETA). Todavía no rota ni cuenta como vejez — apenas arranca el reloj.',
+   bar:[{cls:'wh-disp',kg:20000,l:'En bodega'}], foot:['ETA hoy','20,000 kg']},
+  {title:'2 · Facturas parte', txt:'A los <b>45 días</b> facturas <b>12,000 kg</b>. Esos kilos "rotaron" en 45 días y entran al promedio de rotación de los últimos 90 días.',
+   bar:[{cls:'wh-rot',kg:12000,l:'Rotado 45d'},{cls:'wh-disp',kg:8000,l:'Disponible'}], foot:['12,000 kg facturados','8,000 kg quedan']},
+  {title:'3 · Rotación', txt:'Tu <b>rotación</b> (ponderada por kg) queda en <b>45 días</b>. La meta es 60 → estás <b>mejor</b>, así que acelera ×1.5 y <b>bonifica</b>.',
+   bar:[{cls:'wh-rot',kg:12000,l:'Rotado 45d'},{cls:'wh-disp',kg:8000,l:'Disponible'}], foot:['Rotación 45d','meta 60d → bonifica']},
+  {title:'4 · Vejez', txt:'Los <b>8,000 kg</b> que quedan cumplen <b>60 días</b> al cierre. Esa es tu <b>vejez</b>. La meta es 45 → estás <b>peor</b>, castiga: 45 ÷ 60 = <b>75%</b>.',
+   bar:[{cls:'wh-rot',kg:12000,l:'Rotado'},{cls:'wh-old',kg:8000,l:'Viejo 60d'}], foot:['Vejez 60d','meta 45d → 75%']},
+  {title:'5 · ¿Y si estuviera reservado?', txt:'Si esos 8,000 kg estuvieran <b>reservados</b>, no contarían ni en rotación ni en vejez — <b>pero</b> pagas Finance &amp; Storage. Igual toca rotarlos, y si la reserva se cae, vuelven a contar.',
+   bar:[{cls:'wh-rot',kg:12000,l:'Rotado'},{cls:'wh-res',kg:8000,l:'Reservado (no cuenta)'}], foot:['Reservado = exento','pero con cargo F&S']},
+  {title:'6 · Todo pega al bono', txt:'La <b>rotación</b> (bonifica) suma a tu 20% de base; la <b>vejez</b> (castiga) te deja plata en la mesa. Abajo puedes <b>practicar con tus propios lotes</b> y ver el impacto en dinero.',
+   bar:[{cls:'wh-rot',kg:12000,l:'Rota → bono'},{cls:'wh-old',kg:8000,l:'Envejece → castigo'}], foot:['Rotación sube el bono','Vejez lo baja']}
+];
+let stepI=0;
+function renderStep(){
+  const s=STEPS[stepI], total=s.bar.reduce((a,b)=>a+b.kg,0);
+  $('stepTitle').innerHTML=s.title; $('stepTxt').innerHTML=s.txt;
+  const segs=s.bar.map(b=>'<div class="wh-seg '+b.cls+'" style="width:'+(b.kg/total*100).toFixed(1)+'%">'+(b.kg/total>0.2?b.l:'')+'</div>').join('');
+  $('stepViz').innerHTML='<div class="wh"><div class="wh-bar">'+segs+'</div><div class="wh-labels"><span>'+s.foot[0]+'</span><span>'+s.foot[1]+'</span></div></div>';
+  $('stepDots').innerHTML=STEPS.map((_,j)=>'<i class="'+(j===stepI?'on':'')+'"></i>').join('');
+  $('stepPrev').disabled=stepI===0; $('stepNext').disabled=stepI===STEPS.length-1;
+}
+
 // ── Status equipo (tab 3) ────────────────────────────────────
 function semaf(hoy,target){ const r=hoy/target; return r<=1.0?'ok':(r<=1.15?'warn':'bad'); }
 function drawSpark(cv, series, target){
@@ -930,8 +1018,12 @@ syncPair('kPct','kPct2');
 syncPair('rotMeta','rotMeta2');
 syncPair('vejMeta','vejMeta2');
 
+$('stepPrev').addEventListener('click',()=>{ if(stepI>0){stepI--;renderStep();} });
+$('stepNext').addEventListener('click',()=>{ if(stepI<STEPS.length-1){stepI++;renderStep();} });
+
 renderLots();
 renderStatus();
+renderStep();
 applyRegion(true);   // carga USA (target 3M) al abrir
 recalc();
 </script>
