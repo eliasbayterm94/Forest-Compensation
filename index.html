@@ -160,7 +160,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .st-warn{background:rgba(196,120,32,.16);color:#9c5e15;}
 .st-bad{background:rgba(168,53,28,.14);color:var(--fc-danger);}
 /* status: region cards + sparkline + trend */
-.rcards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.rcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:14px;margin-bottom:16px;}
 @media(max-width:767px){.rcards{grid-template-columns:1fr 1fr;}}
 .rcard{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-3);padding:16px 18px;}
 .rcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -220,7 +220,8 @@ canvas{width:100%;height:210px;margin-top:6px;}
           <span class="mini">Región</span>
           <select id="region">
             <option value="USA" selected>USA</option>
-            <option value="EU">EU (incl. UK)</option>
+            <option value="EU">EU (Vollers)</option>
+            <option value="UK">UK</option>
             <option value="AU">AU</option>
             <option value="MENA">MENA (Dubai)</option>
           </select>
@@ -385,8 +386,9 @@ canvas{width:100%;height:210px;margin-top:6px;}
       <div class="rules" style="margin-top:12px;">
         <b>Justificación por región:</b><br>
         · <b>USA</b> — rotación se deterioró de 53d a 127d en 12 meses; glide path −15d/trimestre (95d en Q3–Q4 2026 → 85d desde Q1 2027). Liquidar los 19 lotes &gt;150d baja ~38d de golpe.<br>
-        · <b>EU</b> — promedio anual 82d con núcleo sano en 53d; target 75/70 alcanzable limpiando 13 lotes &gt;150d.<br>
-        · <b>AU</b> — rotación ya recuperada (~75d); vejez 144d inflada por la cola &gt;270d (21.5% del kg): target 90 obliga a liquidarla sin ser imposible.<br>
+        · <b>EU (Vollers)</b> — bodega sana: rotación 90d en 66d, promedio anual 74d. Target 70 consolida. Antes escondida en el promedio EU combinado.<br>
+        · <b>UK</b> — bodega independiente en crisis: rotación 90d saltó a ~207d (estaba en 67–83d en sep–oct 2025). Glide path 150→120 exigente pero creíble dado que la capacidad existió. <i>Targets provisionales — confirmar.</i><br>
+        · <b>AU</b> — rotación ya recuperada (~80d); vejez 144d inflada por la cola &gt;270d (21.5% del kg): target 90 obliga a liquidarla sin ser imposible.<br>
         · <b>MENA</b> — mejor rotación del grupo (67d); mantener disciplina y limpiar 6 lotes viejos ($61k, el mayor $ en riesgo relativo).
       </div>
     </div>
@@ -472,7 +474,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         </tr></thead>
         <tbody id="stBody"></tbody>
       </table>
-      <div class="note"><b>Cobertura</b> = meses de venta que cubre el inventario disponible. Target de rotación = meta del trimestre vigente (USA en glide path 95→85). Vejez fuera de target en todas: el problema es la <b>cola &gt;150d</b>, no el flujo (núcleo sano 41–72d).</div>
+      <div class="note"><b>Cobertura</b> = meses de venta que cubre el inventario disponible. Target de rotación = meta del trimestre vigente (USA glide 95→85, UK glide 150→120). La rotación de EU (Vollers) y UK es real del CSV por bodega. <b>*</b> vejez, % kg &gt;150d e inventario de EU (Vollers) y UK son <b>provisionales</b> (heredados de EU combinado); pendiente el split del inventario por bodega.</div>
     </div>
 
     <div class="card">
@@ -483,7 +485,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
           <tbody id="trendBody"></tbody>
         </table>
       </div>
-      <div class="note">Cada celda es la rotación móvil de 90 días a cierre de ese mes (días, menos = mejor), coloreada vs el target de la región. La última columna es el valor más reciente. Sirve para ver la <b>tendencia</b>: USA se deterioró sostenido, AU tuvo un pico y se recuperó, EU empeoró en Q1-26 y se estabilizó, MENA es volátil por bajo volumen.</div>
+      <div class="note">Cada celda es la rotación móvil de 90 días a cierre de ese mes (días, menos = mejor), coloreada vs el target de la región. La última columna es el valor más reciente. Sirve para ver la <b>tendencia</b>: USA se deterioró sostenido, <b>UK se disparó a ~190d</b> (bodega en crisis, estaba en 67–83d en sep–oct), Vollers y AU sanas tras un bache, MENA volátil por bajo volumen.</div>
     </div>
   </div>
 </div>
@@ -503,10 +505,11 @@ const PW=.6, PR=.2, PV=.2, ACC=2, CAP=1.5, AP=.7, FT=.85, SH=.5, MMIN=.18;
 // rot3M/rot6M = target rotación (glide path); vejMeta = target vejez;
 // movMensualKg = base del piso X; *Hoy/invSpot/lotesViejos = snapshot real de la región.
 const REGIONES = {
-  USA:  { label:'USA',           rot3M:95, rot6M:85, vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19, vejNucleo:72, pctKg150:34, dolar150k:63.0, coberturaM:0.3 },
-  EU:   { label:'EU (incl. UK)', rot3M:75, rot6M:75, vejMeta:70, movMensualKg:24474, rotHoy:87,  vejHoy:90,  invSpotKg:15102, lotesViejos:13, vejNucleo:53, pctKg150:20, dolar150k:50.2, coberturaM:0.6 },
-  AU:   { label:'AU',            rot3M:70, rot6M:70, vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:null, vejNucleo:70, pctKg150:32, dolar150k:50.4, coberturaM:0.6 },
-  MENA: { label:'MENA (Dubai)',  rot3M:60, rot6M:60, vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6,  vejNucleo:41, pctKg150:39, dolar150k:61.3, coberturaM:1.2 }
+  USA:  { label:'USA',          rot3M:95,  rot6M:85,  vejMeta:85, movMensualKg:43213, rotHoy:111, vejHoy:117, invSpotKg:15056, lotesViejos:19,   vejNucleo:72, pctKg150:34, dolar150k:63.0, coberturaM:0.3 },
+  EU:   { label:'EU (Vollers)', rot3M:70,  rot6M:70,  vejMeta:70, movMensualKg:19265, rotHoy:66,  vejHoy:90,  invSpotKg:11885, lotesViejos:null, vejNucleo:53, pctKg150:20, dolar150k:39.5, coberturaM:0.6, provVej:true },
+  UK:   { label:'UK',           rot3M:150, rot6M:120, vejMeta:70, movMensualKg:5208,  rotHoy:207, vejHoy:90,  invSpotKg:3217,  lotesViejos:null, vejNucleo:53, pctKg150:20, dolar150k:10.7, coberturaM:0.6, provVej:true },
+  AU:   { label:'AU',           rot3M:70,  rot6M:70,  vejMeta:90, movMensualKg:8345,  rotHoy:80,  vejHoy:144, invSpotKg:4631,  lotesViejos:null, vejNucleo:70, pctKg150:32, dolar150k:50.4, coberturaM:0.6 },
+  MENA: { label:'MENA (Dubai)', rot3M:60,  rot6M:60,  vejMeta:75, movMensualKg:5712,  rotHoy:67,  vejHoy:108, invSpotKg:7057,  lotesViejos:6,    vejNucleo:41, pctKg150:39, dolar150k:61.3, coberturaM:1.2 }
 };
 const HORIZ_6M = {'Q1-2027':1, 'Q2-2027':1}; // estos horizontes usan target 6M; el resto 3M
 const K_DEFAULT = 0.33;
@@ -516,7 +519,8 @@ const rotTargetFor=(r,hz)=>HORIZ_6M[hz]?REGIONES[r].rot6M:REGIONES[r].rot3M;
 const TREND_MESES = ['Sep','Oct','Nov','Dic','Ene','Feb','Mar','Abr','May','Jun'];
 const TREND = {
   USA:  [53,73,85,96,95,97,100,112,127,117],
-  EU:   [78,71,58,54,57,92,96,101,92,90],
+  EU:   [74,73,52,43,48,92,94,98,77,71],      // Vollers-Rotterdam
+  UK:   [83,67,79,122,138,93,110,117,176,189],
   AU:   [56,89,117,143,126,94,65,53,72,75],
   MENA: [25,64,76,69,40,71,89,119,68,56]
 };
@@ -855,8 +859,8 @@ function renderStatus(){
     const tr=document.createElement('tr');
     tr.innerHTML='<td><b>'+R.label+'</b></td>'+
       '<td class="num"><span class="dot '+rs+'"></span>'+R.rotHoy+'d</td><td class="num">'+R.rot3M+'d</td>'+
-      '<td class="num"><span class="dot '+vs+'"></span>'+R.vejHoy+'d</td><td class="num">'+R.vejMeta+'d</td>'+
-      '<td class="num">'+R.coberturaM+'m</td><td class="num">'+R.pctKg150+'%</td>';
+      '<td class="num"><span class="dot '+vs+'"></span>'+R.vejHoy+'d'+(R.provVej?'*':'')+'</td><td class="num">'+R.vejMeta+'d</td>'+
+      '<td class="num">'+R.coberturaM+'m</td><td class="num">'+R.pctKg150+'%'+(R.provVej?'*':'')+'</td>';
     b.appendChild(tr);
   });
   // tendencia mensual
