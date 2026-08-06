@@ -289,6 +289,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <div><span class="mini">Meta del mes (USD)</span><input type="number" id="revMeta" value="250000" min="0" step="5000"></div>
         <div><span class="mini">Ventas reales (USD)</span><input type="number" id="revReal" value="250000" min="0" step="5000"></div>
       </div>
+      <div style="margin-top:8px;"><span class="mini">Multiplicador si cumplimiento &lt; 85% (%)</span><input type="number" id="subMult" value="2.5" min="0" step="0.1"></div>
 
       <label>Margen de contribución <span class="val" id="vMg">28.0%</span></label>
       <input type="range" id="mg" min="10" max="50" value="28" step="0.1">
@@ -336,7 +337,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
 
       <div class="strip">
-        <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value" id="cIng">–</div><div class="cell-sub">peso 60% · apertura 70% · acel. ×2 hasta 150%</div></div>
+        <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value" id="cIng">–</div><div class="cell-sub">peso 60% · lineal · &lt;85% ⇒ mult 2.5%</div></div>
         <div class="cell"><div class="cell-label">Rotación</div><div class="cell-value" id="cRot">–</div><div class="cell-sub">peso 20% · acel. ×1.5 · máx 30%</div></div>
         <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value" id="cVej">–</div><div class="cell-sub">peso 20% · solo castiga · máx 20%</div></div>
         <div class="cell"><div class="cell-label">Base total</div><div class="cell-value" id="cBase">–</div><div class="cell-sub">suma de componentes</div></div>
@@ -344,8 +345,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
 
       <div class="alert critical" id="warnMg"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt">Margen inferior al mínimo (18%): el bono del mes es $0.</div></div>
-      <div class="alert critical" id="warnAp"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt">Cumplimiento por debajo de la apertura (70%): el componente de ingresos es 0.</div></div>
-      <div class="alert" id="warnTr"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Tramo reducido (70–85%): se paga el 50% del valor del componente de ingresos a 85%.</div></div>
+      <div class="alert critical" id="warnAp"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt" id="warnApTxt">Cumplimiento &lt; 85%: el multiplicador baja a 2.5% fijo.</div></div>
       <div class="alert info" id="warnCap"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt">Acelerador ×2 aplica hasta 150%; el excedente cuenta normal (×1).</div></div>
       <div class="alert info" id="warnLot"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnLotTxt"></div></div>
       <div class="alert good" id="warnFloor"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="alert-txt" id="warnFloorTxt"></div></div>
@@ -380,15 +380,14 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <div class="card-label">Multiplicador vs Margen — posición seleccionada</div>
         <canvas id="chart" width="640" height="210"></canvas>
         <div class="legend">
-          <span><span class="sw"></span> Modelo nuevo (interpolado)</span>
-          <span><span class="sw old"></span> Modelo anterior (escalones)</span>
+          <span><span class="sw"></span> Multiplicador (escalón por bracket)</span>
           <span><span class="sw dot"></span> Tu margen actual</span>
         </div>
-        <div class="caption">Techo de cada bracket = inicio del siguiente − 0.2 pts. Plano de 46% en adelante.</div>
+        <div class="caption">Cada bracket paga un valor plano (escalón). De 46% en adelante, plano. Nota: si el cumplimiento de revenue &lt; 85%, el multiplicador se reemplaza por 2.5%.</div>
       </div>
 
       <div class="rules">
-        Reglas v2: Base = Ingresos×60% + Rotación×20% + Vejez×20%. Componente de ingresos: 0 si cumplimiento &lt; 70%; entre 70% y 85% se paga el 50% del valor a 85% (25.5% de base); de 85% en adelante lineal; por encima de 100% acelerador ×2 por punto hasta 150%; el excedente sobre 150% cuenta normal (×1). GMC = ventas reales × margen. Rotación = promedio ponderado por región de los últimos 90 días (días, menos = mejor): peor que meta ⇒ meta ÷ real; mejor que meta ⇒ cada día acelera ×1.5, peso máx 30%. Vejez = promedio ponderado al cierre de mes de los cafés disponibles (solo castiga): mejor o igual a la meta ⇒ 100% (no bonifica); peor que meta ⇒ meta ÷ real; si el inventario disponible &lt; X (k% del movimiento mensual de la región) ⇒ 100%, peso máx 20%. Cada lote disponible con &gt;150 días de vejez suma 2 días a la rotación al cierre. Margen &lt; 18% ⇒ bono $0. El pago sigue sujeto a cascada (proporcional a cartera cobrada). Modelo anterior (comparación): ingresos = 0 si cumplimiento &lt; 85%; acelerador ×2 sin tope; multiplicador por escalones; rotación/vejez sin acelerador ni regla de lotes.
+        Reglas v2: Base = Ingresos×60% + Rotación×20% + Vejez×20%. Componente de ingresos: lineal y proporcional al cumplimiento (sin apertura); por encima de 100% acelerador ×2 por punto hasta 150%; el excedente sobre 150% cuenta normal (×1). Multiplicador = valor del bracket de margen por posición (escalón, sin suavizar). Si el cumplimiento de revenue &lt; 85%, el multiplicador se reemplaza por 2.5% (editable). GMC = ventas reales × margen. Rotación = promedio ponderado por región de los últimos 90 días (días, menos = mejor): peor que meta ⇒ meta ÷ real; mejor que meta ⇒ cada día acelera ×1.5, peso máx 30%. Vejez = promedio ponderado al cierre de mes de los cafés disponibles (solo castiga): mejor o igual a la meta ⇒ 100% (no bonifica); peor que meta ⇒ meta ÷ real; si el inventario disponible &lt; X (k% del movimiento mensual de la región) ⇒ 100%, peso máx 20%. Cada lote disponible con &gt;150 días de vejez suma 2 días a la rotación al cierre. Margen &lt; 18% ⇒ bono $0. El pago sigue sujeto a cascada (proporcional a cartera cobrada). Modelo anterior (comparación): ingresos = 0 si cumplimiento &lt; 85%; acelerador ×2 sin tope; rotación/vejez sin acelerador ni regla de lotes.
       </div>
     </div>
   </div>
@@ -567,7 +566,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
     </div>
 
     <div class="strip">
-      <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value">60%</div><div class="cell-sub">apertura 70% · acel. ×2 hasta 150%</div></div>
+      <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value">60%</div><div class="cell-sub">lineal · &lt;85% ⇒ mult 2.5%</div></div>
       <div class="cell"><div class="cell-label">Rotación</div><div class="cell-value">20%</div><div class="cell-sub">bonifica ×1.5 · hasta 30%</div></div>
       <div class="cell"><div class="cell-label">Vejez</div><div class="cell-value">20%</div><div class="cell-sub">solo castiga · máx 20%</div></div>
       <div class="cell featured"><div class="cell-label">Base a cumplimiento pleno</div><div class="cell-value">100%</div><div class="cell-sub">suma de componentes</div></div>
@@ -581,16 +580,15 @@ canvas{width:100%;height:210px;margin-top:6px;}
           <tbody id="mgBody"></tbody>
         </table>
       </div>
-      <div class="note">Cada celda es el <b>piso</b> del bracket. El modelo nuevo <b>interpola</b> dentro del rango (techo = piso del siguiente − 0.2 pts); de 46% en adelante es plano. <b>Margen &lt; 18% ⇒ bono $0.</b></div>
+      <div class="note">Cada bracket paga un <b>valor plano</b> (escalón, sin suavizar); de 46% en adelante es plano. <b>Margen &lt; 18% ⇒ bono $0.</b> Y si el cumplimiento de revenue &lt; 85%, el multiplicador se reemplaza por <b>2.5%</b> (editable en el simulador).</div>
     </div>
 
     <div class="explain">
       <div class="plain">
         <div class="plain-h">Ingresos <span class="plain-tag">peso 60%</span></div>
         <div class="qa">
-          <div class="q down">Apertura</div><div class="a">Cumplimiento &lt; <b>70%</b> ⇒ el componente de ingresos es 0.</div>
-          <div class="q">Tramo 70–85%</div><div class="a">Paga el <b>50%</b> del valor a 85% (25.5% de base).</div>
-          <div class="q">85–100%</div><div class="a">Lineal, proporcional al cumplimiento.</div>
+          <div class="q">Componente</div><div class="a"><b>Lineal</b> y proporcional al cumplimiento (sin apertura, sin piso).</div>
+          <div class="q down">&lt; 85% cumplimiento</div><div class="a">El <b>multiplicador</b> (margen compartido) se reemplaza por <b>2.5%</b> fijo — editable. El componente de ingresos igual paga lineal.</div>
           <div class="q up">100–150%</div><div class="a">Acelerador <b>×2</b> por punto sobre la meta.</div>
           <div class="q">Sobre 150%</div><div class="a">El excedente cuenta normal (×1).</div>
         </div>
@@ -660,22 +658,14 @@ function multOld(mg,p){
   for(const b of BRK) if(mg>=b.min && mg<=b.max) return b.base[p];
   return BRK[5].base[p];
 }
-function multNew(mg,p){
+function multNew(mg,p){   // escalón: valor del bracket (sin suavizar)
   if(mg<MMIN) return 0;
-  for(let i=0;i<BRK.length;i++){
-    const b=BRK[i];
-    if(mg>=b.min && mg<=b.max){
-      if(i===BRK.length-1) return b.base[p];           // plano 46%+
-      const techo=BRK[i+1].base[p]-0.002;              // siguiente − 0.2 pts
-      return b.base[p]+(mg-b.min)/(b.max-b.min)*(techo-b.base[p]);
-    }
-  }
+  for(const b of BRK) if(mg>=b.min && mg<=b.max) return b.base[p];
   return BRK[5].base[p];
 }
 function ingOld(c){ if(c<FT) return 0; return Math.min(c,1)*PW + Math.max(c-1,0)*ACC*PW; }
+// Ingresos v2: lineal (sin apertura 70%), con acelerador ×2 entre 100–150% y ×1 por encima
 function ingNew(c){
-  if(c<AP) return 0;
-  if(c<FT) return SH*FT*PW;
   return Math.min(c,1)*PW + Math.max(Math.min(c,CAP)-1,0)*ACC*PW + Math.max(c-CAP,0)*PW;
 }
 // Rotación: palanca — peor que meta = meta/real; mejor = acelera ×1.5, tope 150%
@@ -733,16 +723,8 @@ function draw(p, mgNow){
   for(let m=0;m<=.13;m+=.03){
     ctx.fillText((m*100).toFixed(0)+'%', L-5, y(m)+3);
   }
-  // modelo anterior (escalones)
-  ctx.strokeStyle='#9a9a93'; ctx.setLineDash([4,3]); ctx.lineWidth=1.5; ctx.beginPath();
-  let first=true;
-  for(let mg=.16; mg<=.50; mg+=.001){
-    const m=multOld(mg,p);
-    if(first){ctx.moveTo(x(mg),y(m)); first=false;} else ctx.lineTo(x(mg),y(m));
-  }
-  ctx.stroke(); ctx.setLineDash([]);
-  // modelo nuevo
-  ctx.strokeStyle='#1b203d'; ctx.lineWidth=2.5; ctx.beginPath(); first=true;
+  // multiplicador (escalón por bracket)
+  ctx.strokeStyle='#1b203d'; ctx.lineWidth=2.5; ctx.beginPath(); let first=true;
   for(let mg=.16; mg<=.50; mg+=.001){
     const m=multNew(mg,p);
     if(first){ctx.moveTo(x(mg),y(m)); first=false;} else ctx.lineTo(x(mg),y(m));
@@ -774,7 +756,9 @@ function update(){
   $('vRot').textContent=fmtP(rot,0); $('vVej').textContent=fmtP(vej,0);
   $('vK').textContent=(+$('kPct').value)+'% · X '+fmtKg(X);
 
-  const ing=ingNew(cum), baseN=ing+rot*PR+vej*PV, mN=multNew(mg,p);
+  const ing=ingNew(cum), baseN=ing+rot*PR+vej*PV;
+  const subMult=(+$('subMult').value||0)/100;   // multiplicador si cumplimiento < 85% (editable)
+  const mN = mg<MMIN ? 0 : (cum<FT ? subMult : multNew(mg,p));   // <85% ⇒ 2.5% fijo
   const bonoN=gmc*baseN*mN;
   const baseO=ingOld(cum)+rotO*PR+vejO*PV, mO=multOld(mg,p);
   const bonoO=gmc*baseO*mO;
@@ -793,8 +777,8 @@ function update(){
   sc.classList.toggle('is-crit', d<0);
 
   $('warnMg').style.display = mg<MMIN?'flex':'none';
-  $('warnAp').style.display = (mg>=MMIN && cum<AP)?'flex':'none';
-  $('warnTr').style.display = (mg>=MMIN && cum>=AP && cum<FT)?'flex':'none';
+  $('warnAp').style.display = (mg>=MMIN && cum<FT)?'flex':'none';
+  if(mg>=MMIN && cum<FT) $('warnApTxt').textContent='Cumplimiento < 85%: el multiplicador (margen compartido) baja a '+(+$('subMult').value)+'% fijo.';
   $('warnCap').style.display = cum>CAP?'flex':'none';
   if(lot>0){ $('warnLot').style.display='flex'; $('warnLotTxt').textContent=lot+' lote(s) >150 días suman '+(2*lot)+' días a rotación: real ajustado '+rRA+' días.'; }
   else $('warnLot').style.display='none';
@@ -1080,7 +1064,7 @@ $('sendToSim').addEventListener('click',()=>{
 });
 
 /* listeners */
-['pos','revMeta','revReal','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct'].forEach(id=>{
+['pos','revMeta','revReal','subMult','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct'].forEach(id=>{
   $(id).addEventListener('input',recalc);
 });
 $('region').addEventListener('change',()=>{ applyRegion(true); recalc(); });
