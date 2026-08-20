@@ -344,7 +344,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         <div><span class="mini">Ventas últimos 90 días (USD)</span><input type="number" id="ventas90" value="600000" min="0" step="10000"></div>
         <div><span class="mini">Cartera vencida (USD)</span><input type="number" id="carteraVenc" value="30000" min="0" step="5000"></div>
       </div>
-      <div class="note">Cupo = 8% de las ventas 90d. % vencido = cartera ÷ ventas 90d. ≤8% ⇒ sin retención · 8–12% ⇒ retiene 50% · &gt;12% ⇒ retiene 100% (hasta que baje del 12%).</div>
+      <div class="note">Cupo = 8% de las ventas 90d (número concreto por comercial). Si la cartera vencida &le; cupo, el revenue paga 100%; si lo <b>excede</b>, el componente de revenue (60%) se paga <b>0%</b>. Rotación y vejez no se afectan.</div>
     </div>
 
     <div>
@@ -366,10 +366,10 @@ canvas{width:100%;height:210px;margin-top:6px;}
       </div>
 
       <div class="strip" id="carteraStrip" style="margin-bottom:14px;">
-        <div class="cell"><div class="cell-label">Bono bruto (modelo)</div><div class="cell-value" id="caBruto">–</div><div class="cell-sub">antes de cartera</div></div>
-        <div class="cell"><div class="cell-label">% vencido</div><div class="cell-value" id="caPct">–</div><div class="cell-sub" id="caCupo">cupo 8%</div></div>
-        <div class="cell"><div class="cell-label">Retención</div><div class="cell-value" id="caRet">–</div><div class="cell-sub" id="caBand">banda</div></div>
-        <div class="cell featured is-net"><div class="cell-label">Bono NETO a pagar</div><div class="cell-value" id="caNeto">–</div><div class="cell-sub">después de cartera</div></div>
+        <div class="cell"><div class="cell-label">Cupo de cartera (8%)</div><div class="cell-value" id="caCupo">–</div><div class="cell-sub">máx vencido sin castigo</div></div>
+        <div class="cell"><div class="cell-label">Cartera vencida</div><div class="cell-value" id="caVenc">–</div><div class="cell-sub" id="caPct">–</div></div>
+        <div class="cell"><div class="cell-label">Estado</div><div class="cell-value" id="caEstado">–</div><div class="cell-sub" id="caBand">–</div></div>
+        <div class="cell featured"><div class="cell-label">Aporte revenue al bono</div><div class="cell-value" id="caRev">–</div><div class="cell-sub">0% si excede el cupo</div></div>
       </div>
       <div class="alert critical" id="warnCart"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt" id="warnCartTxt"></div></div>
 
@@ -598,9 +598,9 @@ canvas{width:100%;height:210px;margin-top:6px;}
 
     <div class="strip" style="margin-bottom:16px;">
       <div class="cell"><div class="cell-label">Comerciales</div><div class="cell-value" id="coN">–</div><div class="cell-sub">en el escenario</div></div>
-      <div class="cell"><div class="cell-label">Bono bruto total</div><div class="cell-value" id="coBruto">–</div><div class="cell-sub">suma del equipo</div></div>
-      <div class="cell"><div class="cell-label">Retenido por cartera</div><div class="cell-value" id="coRet">–</div><div class="cell-sub">total retenido</div></div>
-      <div class="cell featured is-net"><div class="cell-label">Bono neto total</div><div class="cell-value" id="coNeto">–</div><div class="cell-sub">a pagar</div></div>
+      <div class="cell"><div class="cell-label">Bono sin cartera</div><div class="cell-value" id="coBruto">–</div><div class="cell-sub">si todos dentro del cupo</div></div>
+      <div class="cell"><div class="cell-label">Perdido por cartera</div><div class="cell-value" id="coRet">–</div><div class="cell-sub">revenue anulado</div></div>
+      <div class="cell featured is-net"><div class="cell-label">Bono a pagar total</div><div class="cell-value" id="coNeto">–</div><div class="cell-sub">del equipo</div></div>
     </div>
 
     <div class="coms" id="comsGrid"></div>
@@ -663,7 +663,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         · <b>GMC</b> = ventas reales × margen de contribución.<br>
         · <b>Piso de vejez X</b> = 33% del movimiento mensual de la región; si el inventario disponible &lt; X, la vejez no castiga.<br>
         · <b>Cascada</b> — el bono se paga proporcional a la cartera cobrada.<br>
-        · <b>Retención por cartera vencida</b> — % vencido = cartera vencida ÷ ventas de los últimos 90 días (cupo = 8% de esas ventas): ≤8% sin retención · 8–12% retiene 50% de la comisión · &gt;12% retiene 100% (hasta que baje del 12%).<br>
+        · <b>Cartera vencida</b> — cupo = 8% de las ventas de los últimos 90 días (número concreto por comercial). Si la cartera vencida &le; cupo, el revenue paga 100%; si lo excede, el componente de <b>revenue (60%) se paga 0%</b>. Rotación y vejez no se afectan.<br>
         · <b>Rotación</b> = ventana móvil de 90 días; <b>vejez</b> = foto al cierre de mes. Ambas en días ponderados por kg (menos = mejor).<br>
         · <b>Targets por región</b> se recalibran cada trimestre con la rotación móvil 90d (ver tab Rotación &amp; Vejez).
       </div>
@@ -725,12 +725,11 @@ function ingNew(c){
 function compRot(m,r){ if(m<=0||r<=0) return 0; return r>=m ? m/r : Math.min(1+(m-r)/m*1.5, 1.5); }
 // Vejez: solo castiga — mejor o igual a meta = 100%; inventario < X = 100%; peor = meta/real
 function compVej(m,r,inv,X){ if(X>0 && inv>=0 && inv<X) return 1; if(m<=0||r<=0) return 0; return r<=m ? 1 : m/r; }
-// Retención de cartera vencida sobre la comisión (% vencido = cartera ÷ ventas 90d)
-// ≤8% ⇒ retiene 0 · (8%,12%] ⇒ 50% · >12% ⇒ 100%
-function carteraRet(ventas90, cartera){
-  if(ventas90<=0) return {pct:0, ret:0, cupo:0};
-  const pct=cartera/ventas90;
-  return {pct, cupo:0.08*ventas90, ret: pct<=0.08 ? 0 : (pct<=0.12 ? 0.5 : 1)};
+// Cartera vencida: cupo = 8% de las ventas 90d (número concreto por comercial).
+// ≤ cupo (≤8%) ⇒ revenue paga 100% · > cupo ⇒ el componente de revenue se paga 0%.
+function carteraCheck(ventas90, cartera){
+  const cupo=0.08*ventas90, pct= ventas90>0 ? cartera/ventas90 : 0;
+  return {pct, cupo, excede: cartera>cupo};
 }
 
 const $=id=>document.getElementById(id);
@@ -816,10 +815,15 @@ function update(){
   $('vRot').textContent=fmtP(rot,0); $('vVej').textContent=fmtP(vej,0);
   $('vK').textContent=(+$('kPct').value)+'% · X '+fmtKg(X);
 
-  const ing=ingNew(cum), baseN=ing+rot*PR+vej*PV;
+  // Cartera: si la vencida supera el cupo (8% de ventas 90d), el revenue paga 0%
+  const ventas90=+$('ventas90').value||0, carteraV=+$('carteraVenc').value||0;
+  const cc=carteraCheck(ventas90, carteraV);
+  const ingFull=ingNew(cum), ing = cc.excede ? 0 : ingFull;
+  const baseN=ing+rot*PR+vej*PV;
   const subMult=(+$('subMult').value||0)/100;   // multiplicador si cumplimiento < 85% (editable)
   const mN = mg<MMIN ? 0 : (cum<FT ? subMult : multNew(mg,p));   // <85% ⇒ 3% fijo (editable)
   const bonoN=gmc*baseN*mN;
+  const bonoIdeal=gmc*(ingFull+rot*PR+vej*PV)*mN;   // sin castigo de cartera (referencia)
   const baseO=ingOld(cum)+rotO*PR+vejO*PV, mO=multOld(mg,p);
   const bonoO=gmc*baseO*mO;
 
@@ -836,16 +840,16 @@ function update(){
   sc.classList.toggle('is-ok', d>=0);
   sc.classList.toggle('is-crit', d<0);
 
-  // ── Retención de cartera vencida ──
-  const ventas90=+$('ventas90').value||0, carteraV=+$('carteraVenc').value||0;
-  const cc=carteraRet(ventas90, carteraV), bonoNeto=bonoN*(1-cc.ret);
-  $('caBruto').textContent=fmt$(bonoN);
-  $('caPct').textContent=fmtP(cc.pct,1);
-  $('caCupo').textContent='cupo 8% = '+fmt$(cc.cupo);
-  $('caRet').textContent=fmtP(cc.ret,0);
-  $('caBand').textContent = cc.ret===0?'≤8% · sin retención' : (cc.ret===0.5?'8–12% · retiene 50%':'>12% · retiene 100%');
-  $('caNeto').textContent=fmt$(bonoNeto);
-  if(cc.ret>0){ $('warnCart').style.display='flex'; $('warnCartTxt').textContent='Cartera vencida '+fmtP(cc.pct,1)+' (> 8%): se retiene '+fmtP(cc.ret,0)+' de la comisión. Bono neto '+fmt$(bonoNeto)+'.'; }
+  // ── Cartera vencida: castiga el componente de revenue ──
+  $('caCupo').textContent=fmt$(cc.cupo);
+  $('caVenc').textContent=fmt$(carteraV);
+  $('caPct').textContent=fmtP(cc.pct,1)+' de ventas 90d';
+  $('caEstado').textContent = cc.excede ? 'Excede' : 'Dentro';
+  $('caBand').textContent = cc.excede ? 'revenue al 0%' : '≤8% · sin castigo';
+  $('caRev').textContent = cc.excede ? '$0' : fmt$(gmc*ingFull*mN);
+  const revLost = bonoIdeal - bonoN;
+  const caCell=$('caEstado').closest('.cell');
+  if(cc.excede){ $('warnCart').style.display='flex'; $('warnCartTxt').textContent='Cartera vencida '+fmt$(carteraV)+' supera el cupo '+fmt$(cc.cupo)+' (8% de ventas 90d): el componente de revenue se paga al 0% (−'+fmt$(revLost)+'). Rotación y vejez no se afectan.'; }
   else $('warnCart').style.display='none';
 
   $('warnMg').style.display = mg<MMIN?'flex':'none';
@@ -1118,17 +1122,18 @@ function comMetrics(c){
   const cum=c.revMeta>0?c.revReal/c.revMeta:0, mg=(c.mg||0)/100, gmc=c.revReal*mg;
   const rot=compRot(R.rot3M,R.rotHoy);
   const k=(+($('kPct').value||33))/100, vej=compVej(R.vejMeta,R.vejHoy,R.invSpotKg,R.movMensualKg*k);
-  const base=ingNew(cum)+rot*PR+vej*PV, subMult=(+$('subMult').value||0)/100;
+  const subMult=(+$('subMult').value||0)/100;
   const mult = mg<MMIN ? 0 : (cum<FT ? subMult : multNew(mg,c.pos));
-  const bruto=gmc*base*mult, cc=carteraRet(c.ventas90,c.cartera), neto=bruto*(1-cc.ret);
-  return {cum,gmc,rot,vej,base,mult,bruto,cc,neto};
+  const cc=carteraCheck(c.ventas90,c.cartera);
+  const ingFull=ingNew(cum), ing=cc.excede?0:ingFull;
+  const base=ing+rot*PR+vej*PV;
+  const bono=gmc*base*mult, bonoIdeal=gmc*(ingFull+rot*PR+vej*PV)*mult;
+  return {cum,gmc,rot,vej,base,mult,bono,bonoIdeal,cc};
 }
 function comOutHTML(r){
-  const band=r.cc.ret===0?'st-ok':(r.cc.ret===0.5?'st-warn':'st-bad');
-  const bt=r.cc.ret===0?'sin retención':(r.cc.ret===0.5?'retiene 50%':'retiene 100%');
+  const band=r.cc.excede?'st-bad':'st-ok', bt=r.cc.excede?'revenue 0%':'dentro del cupo';
   return '<div class="row"><span>Cumplimiento · GMC</span><b>'+fmtP(r.cum,0)+' · '+fmt$(r.gmc)+'</b></div>'+
     '<div class="row"><span>Base · Mult</span><b>'+fmtP(r.base)+' · '+fmtP(r.mult,2)+'</b></div>'+
-    '<div class="row"><span>Bono bruto</span><b>'+fmt$(r.bruto)+'</b></div>'+
     '<div class="row"><span>Cartera '+fmtP(r.cc.pct,1)+' (cupo '+fmt$(r.cc.cupo)+')</span><span class="com-ret '+band+'">'+bt+'</span></div>';
 }
 function renderComs(){
@@ -1150,7 +1155,7 @@ function renderComs(){
         '<div style="grid-column:1/-1"><span class="mini">Cartera vencida</span>'+nI('cartera',c.cartera,5000)+'</div>'+
       '</div>'+
       '<div class="com-out" id="comOut-'+i+'">'+comOutHTML(r)+'</div>'+
-      '<div class="com-neto" id="comNeto-'+i+'"><span>Bono neto</span><b>'+fmt$(r.neto)+'</b></div>';
+      '<div class="com-neto" id="comNeto-'+i+'"><span>Bono a pagar</span><b>'+fmt$(r.bono)+'</b></div>';
     g.appendChild(d);
   });
   refreshComTotals();
@@ -1158,13 +1163,13 @@ function renderComs(){
 function refreshCom(i){
   const r=comMetrics(COMS[i]);
   const o=$('comOut-'+i); if(o) o.innerHTML=comOutHTML(r);
-  const n=$('comNeto-'+i); if(n) n.innerHTML='<span>Bono neto</span><b>'+fmt$(r.neto)+'</b>';
+  const n=$('comNeto-'+i); if(n) n.innerHTML='<span>Bono a pagar</span><b>'+fmt$(r.bono)+'</b>';
   refreshComTotals();
 }
 function refreshComTotals(){
-  let tB=0,tN=0; COMS.forEach(c=>{const r=comMetrics(c);tB+=r.bruto;tN+=r.neto;});
-  if($('coN')){ $('coN').textContent=COMS.length; $('coBruto').textContent=fmt$(tB);
-    $('coRet').textContent=fmt$(tB-tN); $('coNeto').textContent=fmt$(tN); }
+  let tI=0,tB=0; COMS.forEach(c=>{const r=comMetrics(c);tI+=r.bonoIdeal;tB+=r.bono;});
+  if($('coN')){ $('coN').textContent=COMS.length; $('coBruto').textContent=fmt$(tI);
+    $('coRet').textContent=fmt$(tI-tB); $('coNeto').textContent=fmt$(tB); }
 }
 
 function recalc(){ update(); calc2(); renderTargets(); }
