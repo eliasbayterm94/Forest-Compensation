@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forest Coffee — Modelo de Compensación (Presentación)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fc-yellow:#e7e244; --fc-blue:#95b5ce; --fc-navy:#1b203d; --fc-navy-dark:#0f1226;
+  --fc-ink:#0c0c0b; --fc-paper:#fff; --fc-cream:#f5f4ee;
+  --fc-yellow-600:#c9c422; --fc-blue-100:#e6eef5; --fc-blue-200:#c7d8e6; --fc-blue-700:#5b85a3;
+  --fc-ink-100:#e8e8e2; --fc-ink-200:#c9c9c2; --fc-ink-300:#9a9a93; --fc-ink-500:#5a5a55;
+  --fc-success:#4d7c2f; --fc-warning:#c47820; --fc-danger:#a8351c;
+  --fc-fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fc-fb:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --fc-fm:"DM Mono",ui-monospace,Menlo,monospace;
+  --fc-lsd:0.18em; --fc-lse:0.32em; --fc-lsl:0.04em; --fc-lst:-0.01em;
+  --fc-on2:rgba(255,255,255,.80); --fc-on3:rgba(255,255,255,.60);
+  --fc-ease:cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:var(--fc-fb);background:var(--fc-navy-dark);color:var(--fc-ink);overflow:hidden;-webkit-font-smoothing:antialiased;}
+
+/* deck */
+.deck{position:relative;width:100vw;height:100vh;}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:6vh 8vw;background:var(--fc-cream);opacity:0;transition:opacity .35s var(--fc-ease);}
+.slide.active{display:flex;opacity:1;}
+.slide.navy{background:var(--fc-navy);color:#fff;}
+.slide.navy::before{content:'';position:absolute;top:0;right:0;width:34vw;height:34vw;
+  background:radial-gradient(circle at top right,rgba(231,226,68,.10),transparent 68%);pointer-events:none;}
+
+/* type */
+.eyebrow{font-family:var(--fc-fb);font-weight:600;font-size:clamp(10px,1.1vw,13px);letter-spacing:var(--fc-lse);
+  text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:2.5vh;}
+.navy .eyebrow{color:var(--fc-on3);}
+h1{font-family:var(--fc-fd);font-weight:800;font-size:clamp(34px,6vw,84px);line-height:.98;
+  letter-spacing:var(--fc-lst);text-transform:uppercase;color:var(--fc-navy);}
+.navy h1{color:#fff;}
+h1 .hl{color:var(--fc-yellow-600);}
+.navy h1 .hl{color:var(--fc-yellow);}
+h2{font-family:var(--fc-fd);font-weight:700;font-size:clamp(24px,3.4vw,46px);line-height:1.05;
+  letter-spacing:var(--fc-lsd);text-transform:uppercase;color:var(--fc-navy);margin-bottom:3vh;}
+.navy h2{color:#fff;}
+.lede{font-size:clamp(15px,1.7vw,22px);line-height:1.5;color:var(--fc-ink-500);max-width:52ch;}
+.navy .lede{color:var(--fc-on2);}
+.sub{font-size:clamp(13px,1.4vw,18px);color:var(--fc-ink-500);margin-top:2.5vh;letter-spacing:var(--fc-lsl);}
+.navy .sub{color:var(--fc-on3);}
+b{font-weight:700;} .navy b{color:#fff;}
+.mono{font-family:var(--fc-fm);}
+
+/* formula block */
+.formula{font-family:var(--fc-fd);font-weight:800;font-size:clamp(26px,4.6vw,64px);letter-spacing:var(--fc-lst);
+  color:#fff;line-height:1.1;margin:2vh 0;}
+.formula .op{color:var(--fc-on3);margin:0 .3em;}
+.formula .a{color:var(--fc-yellow);}
+.formula .b{color:var(--fc-blue);}
+.formula .c{color:#fff;}
+
+/* base composition */
+.comp{display:grid;grid-template-columns:repeat(3,1fr);gap:2vw;margin-top:2vh;max-width:1000px;}
+.comp .box{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:12px;padding:3vh 2vw;}
+.comp .box.big{border-top:4px solid var(--fc-navy);}
+.comp .pct{font-family:var(--fc-fd);font-weight:800;font-size:clamp(30px,4vw,56px);color:var(--fc-navy);letter-spacing:var(--fc-lst);line-height:1;}
+.comp .nm{font-family:var(--fc-fd);font-weight:700;font-size:clamp(11px,1.2vw,15px);letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);margin:1.2vh 0 .6vh;}
+.comp .ds{font-size:clamp(11px,1.1vw,14px);color:var(--fc-ink-500);line-height:1.45;}
+
+/* two-column explainer */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:3vw;align-items:start;margin-top:1vh;}
+@media(max-width:800px){.cols{grid-template-columns:1fr;gap:3vh;}}
+.qa{display:grid;grid-template-columns:auto 1fr;gap:1.4vh 1.2vw;align-items:start;font-size:clamp(13px,1.35vw,18px);}
+.qa .q{font-family:var(--fc-fd);font-weight:700;font-size:clamp(9px,.95vw,12px);letter-spacing:var(--fc-lse);
+  text-transform:uppercase;color:var(--fc-ink-500);white-space:nowrap;padding-top:.4vh;position:relative;padding-left:16px;}
+.qa .q::before{content:'';position:absolute;left:0;top:.7vh;width:8px;height:8px;border-radius:50%;background:var(--fc-ink-200);}
+.qa .q.up::before{background:var(--fc-success);}
+.qa .q.down::before{background:var(--fc-danger);}
+.qa .a{color:var(--fc-ink-500);line-height:1.5;}
+
+/* margin table */
+table.mg{border-collapse:collapse;width:100%;max-width:1050px;margin-top:1vh;font-size:clamp(12px,1.35vw,18px);}
+table.mg th,table.mg td{padding:1.4vh 1vw;text-align:center;border-bottom:1px solid var(--fc-ink-100);}
+table.mg th{font-family:var(--fc-fd);font-weight:700;font-size:clamp(9px,1vw,12px);letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);}
+table.mg td{font-family:var(--fc-fm);color:var(--fc-navy);}
+table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(--fc-fd);font-weight:700;}
+table.mg tr:hover td{background:var(--fc-paper);}
+
+/* example flow */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1.4vw;margin-top:1.5vh;max-width:1100px;}
+.step{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:10px;padding:2.2vh 1.4vw;}
+.step .k{font-family:var(--fc-fd);font-weight:700;font-size:clamp(9px,.95vw,12px);letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:.8vh;}
+.step .v{font-family:var(--fc-fm);font-size:clamp(15px,1.9vw,26px);color:var(--fc-navy);letter-spacing:var(--fc-lst);}
+.step.res{background:var(--fc-navy);border:none;}
+.step.res .k{color:var(--fc-on3);} .step.res .v{color:var(--fc-yellow);}
+.two-res{display:grid;grid-template-columns:1fr 1fr;gap:1.4vw;margin-top:1.6vh;max-width:760px;}
+.rescard{border-radius:12px;padding:2.4vh 1.8vw;}
+.rescard.ok{background:rgba(77,124,47,.12);border:1px solid rgba(77,124,47,.3);}
+.rescard.bad{background:rgba(168,53,28,.10);border:1px solid rgba(168,53,28,.28);}
+.rescard .rl{font-family:var(--fc-fd);font-weight:700;font-size:clamp(9px,1vw,12px);letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:.8vh;}
+.rescard .rv{font-family:var(--fc-fd);font-weight:800;font-size:clamp(26px,3.4vw,46px);letter-spacing:var(--fc-lst);line-height:1;}
+.rescard.ok .rv{color:var(--fc-success);} .rescard.bad .rv{color:var(--fc-danger);}
+.rescard .rs{font-size:clamp(11px,1.1vw,14px);color:var(--fc-ink-500);margin-top:.8vh;}
+
+/* pills / chips */
+.chips{display:flex;flex-wrap:wrap;gap:1vh 1vw;margin-top:2.5vh;}
+.chip{font-family:var(--fc-fm);font-size:clamp(11px,1.2vw,15px);background:var(--fc-paper);border:1px solid var(--fc-ink-100);
+  border-radius:999px;padding:.9vh 1.3vw;color:var(--fc-ink-500);}
+.navy .chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);color:var(--fc-on2);}
+.chip b{color:var(--fc-navy);} .navy .chip b{color:#fff;}
+
+/* rules list */
+.rules{margin-top:1vh;max-width:60ch;}
+.rules li{list-style:none;font-size:clamp(13px,1.45vw,19px);line-height:1.5;color:var(--fc-ink-500);
+  padding:1.1vh 0 1.1vh 1.6em;position:relative;border-bottom:1px solid var(--fc-ink-100);}
+.rules li::before{content:'';position:absolute;left:0;top:1.9vh;width:9px;height:9px;background:var(--fc-yellow-600);border-radius:2px;}
+.rules li b{color:var(--fc-navy);}
+
+/* chrome: progress + nav + footer */
+.bar{position:fixed;top:0;left:0;height:4px;background:var(--fc-yellow);z-index:20;transition:width .35s var(--fc-ease);}
+.foot{position:fixed;bottom:2.4vh;left:8vw;right:8vw;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--fc-fd);font-weight:700;font-size:clamp(8px,.85vw,11px);letter-spacing:var(--fc-lse);text-transform:uppercase;
+  color:var(--fc-ink-300);z-index:15;pointer-events:none;}
+.slide.navy ~ .foot,.foot.on-navy{color:var(--fc-on3);}
+.nav{position:fixed;bottom:2vh;right:8vw;display:flex;gap:8px;align-items:center;z-index:20;}
+.nav .ctr{font-family:var(--fc-fm);font-size:clamp(10px,1vw,13px);color:var(--fc-ink-300);margin-right:6px;}
+.nav button{appearance:none;width:38px;height:38px;border-radius:8px;border:1px solid var(--fc-ink-200);background:var(--fc-paper);
+  color:var(--fc-navy);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .15s var(--fc-ease);}
+.nav button:hover{background:var(--fc-navy);color:#fff;border-color:var(--fc-navy);}
+.dots{position:fixed;bottom:2.9vh;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:15;}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--fc-ink-200);cursor:pointer;transition:all .2s var(--fc-ease);}
+.dots i.on{background:var(--fc-navy);width:22px;border-radius:4px;}
+.hint{position:fixed;bottom:2.4vh;left:8vw;font-family:var(--fc-fd);font-weight:700;font-size:clamp(8px,.85vw,11px);
+  letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-300);z-index:15;}
+.logo{position:fixed;top:3vh;left:8vw;display:flex;align-items:center;gap:10px;z-index:15;}
+.logo .mk{width:30px;height:30px;background:var(--fc-yellow);border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fc-fd);font-weight:900;font-size:15px;color:var(--fc-navy-dark);}
+.logo .tx{font-family:var(--fc-fd);font-weight:700;font-size:clamp(9px,1vw,12px);letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);}
+.slide.navy .logo-tx-navy{color:var(--fc-on3);}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · Portada -->
+  <section class="slide navy active">
+    <div class="eyebrow">Forest Coffee · Compensación Comercial · 2026</div>
+    <h1>Modelo de<br>compensación <span class="hl">Spot v2</span></h1>
+    <div class="sub">Cómo se calcula tu bono, de punta a punta. Revenue · Rotación · Vejez · Cartera.</div>
+    <div class="chips">
+      <span class="chip"><b>Bono</b> = GMC × Base × Multiplicador</span>
+      <span class="chip">Base = <b>60/20/20</b></span>
+      <span class="chip">Margen mínimo <b>18%</b></span>
+    </div>
+  </section>
+
+  <!-- 2 · La fórmula -->
+  <section class="slide navy">
+    <div class="eyebrow">La fórmula</div>
+    <div class="formula"><span class="a">Bono</span><span class="op">=</span><span class="c">GMC</span><span class="op">×</span><span class="b">Base</span><span class="op">×</span><span class="c">Multiplicador</span></div>
+    <div class="lede" style="margin-top:2vh;">
+      <b>GMC</b> = tus ventas reales × el margen de contribución.<br>
+      <b>Multiplicador</b> = el % del GMC que se comparte (según tu posición y el margen).<br>
+      <b>Base</b> = qué tan bien cumpliste los tres componentes.
+    </div>
+    <div class="sub">El pago final va sujeto a cascada (proporcional a la cartera cobrada).</div>
+  </section>
+
+  <!-- 3 · La base -->
+  <section class="slide">
+    <div class="eyebrow">La base — de qué se compone</div>
+    <h2>Tres palancas, un solo bono</h2>
+    <div class="comp">
+      <div class="box big"><div class="pct">60%</div><div class="nm">Revenue</div><div class="ds">Cumplir tu meta de ventas. Es la palanca más grande.</div></div>
+      <div class="box"><div class="pct">20%</div><div class="nm">Rotación</div><div class="ds">Qué tan rápido sale el café que facturas.</div></div>
+      <div class="box"><div class="pct">20%</div><div class="nm">Vejez</div><div class="ds">Qué tan viejo está lo que sigue en bodega.</div></div>
+    </div>
+    <div class="sub">A cumplimiento pleno, la base suma 100%. Rotación puede subir a 30% si superas la meta.</div>
+  </section>
+
+  <!-- 4 · Revenue -->
+  <section class="slide">
+    <div class="eyebrow">Revenue · peso 60%</div>
+    <h2>Tu meta de ventas</h2>
+    <div class="cols">
+      <div class="qa">
+        <div class="q">Cómo paga</div><div class="a"><b>Lineal</b> y proporcional al cumplimiento. Al 100% pagas el 60% completo.</div>
+        <div class="q up">Acelerador</div><div class="a">Entre 100% y 150% cada punto vale <b>×2</b>. Por encima de 150% cuenta normal.</div>
+        <div class="q down">Debajo del 85%</div><div class="a">El <b>multiplicador</b> (margen compartido) baja a <b>3%</b> fijo. Es el gran incentivo para llegar al 85%.</div>
+      </div>
+      <div class="chips" style="margin-top:0;flex-direction:column;align-items:flex-start;">
+        <span class="chip">84% cumpl. → mult <b>3%</b></span>
+        <span class="chip">85% cumpl. → mult del bracket (ej. <b>6.2%</b>)</span>
+        <span class="chip">120% cumpl. → +40% por acelerador</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · Margen compartido -->
+  <section class="slide">
+    <div class="eyebrow">Multiplicador — margen compartido (% del GMC)</div>
+    <h2>Cuanto mejor el margen, más compartes</h2>
+    <table class="mg">
+      <thead><tr><th>Margen de contribución</th><th>Jr AM</th><th>Sr AM</th><th>Regional</th><th>Global</th></tr></thead>
+      <tbody>
+        <tr><td>18.0 – 25.9%</td><td>4.8%</td><td>5.2%</td><td>5.4%</td><td>5.6%</td></tr>
+        <tr><td>26.0 – 30.9%</td><td>5.8%</td><td>6.2%</td><td>6.4%</td><td>6.6%</td></tr>
+        <tr><td>31.0 – 35.9%</td><td>7.8%</td><td>8.2%</td><td>8.4%</td><td>8.6%</td></tr>
+        <tr><td>36.0 – 40.9%</td><td>8.8%</td><td>9.2%</td><td>9.4%</td><td>9.6%</td></tr>
+        <tr><td>41.0 – 45.9%</td><td>10.8%</td><td>11.2%</td><td>11.4%</td><td>11.6%</td></tr>
+        <tr><td>46% o más</td><td>11.8%</td><td>12.2%</td><td>12.4%</td><td>12.6%</td></tr>
+      </tbody>
+    </table>
+    <div class="sub">Escalón por bracket. Margen &lt; 18% ⇒ bono $0. Cumplimiento de revenue &lt; 85% ⇒ multiplicador 3%.</div>
+  </section>
+
+  <!-- 6 · Rotación -->
+  <section class="slide">
+    <div class="eyebrow">Rotación · peso 20% (hasta 30%)</div>
+    <h2>Qué tan rápido sale el café</h2>
+    <div class="cols">
+      <div class="qa">
+        <div class="q">Qué mide</div><div class="a">Días promedio (ponderados por kg) desde que <b>facturas</b>, en los últimos 90 días. Menos días = mejor.</div>
+        <div class="q up">Qué la mejora</div><div class="a">Rotar rápido. Si bajas de la meta, <b>acelera ×1.5</b> — bonifica.</div>
+        <div class="q down">Qué la castiga</div><div class="a">Lotes sin rotar. Cada lote <b>disponible &gt;150 días</b> suma +2 días.</div>
+      </div>
+      <div class="lede">La rotación es la palanca que <b>tú sí mueves</b>: factura los lotes a tiempo y la rotación baja.</div>
+    </div>
+  </section>
+
+  <!-- 7 · Vejez + reservas -->
+  <section class="slide">
+    <div class="eyebrow">Vejez · peso 20% · solo castiga</div>
+    <h2>Qué tan viejo está lo disponible</h2>
+    <div class="cols">
+      <div class="qa">
+        <div class="q">Qué mide</div><div class="a">La edad promedio del inventario <b>disponible</b> al cierre de mes.</div>
+        <div class="q up">Qué la mejora</div><div class="a">Estar en meta o mejor paga <b>100%</b> — nunca bonifica de más.</div>
+        <div class="q down">Qué la castiga</div><div class="a">Cargar inventario viejo. Si el inventario está por debajo del piso <b>X</b>, no castiga.</div>
+      </div>
+      <div class="qa">
+        <div class="q">Reservas</div><div class="a">Un lote <b>reservado</b> no cuenta ni en rotación ni en vejez — <b>pero</b> paga Finance &amp; Storage. Igual toca rotarlo, y si la reserva se cae, vuelve a contar.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · Cartera -->
+  <section class="slide navy">
+    <div class="eyebrow">Cartera vencida — la regla nueva</div>
+    <h2 style="color:#fff;">Cuida tu cartera</h2>
+    <div class="lede">Tu <b>cupo</b> = 8% de tus ventas de los últimos 90 días. Es un número concreto en dólares.</div>
+    <div class="two-res">
+      <div class="rescard ok"><div class="rl">Cartera ≤ cupo (≤8%)</div><div class="rv">100%</div><div class="rs">El revenue paga completo.</div></div>
+      <div class="rescard bad"><div class="rl">Cartera &gt; cupo</div><div class="rv">0%</div><div class="rs">El componente de revenue (60%) se anula. Rotación y vejez no se tocan.</div></div>
+    </div>
+    <div class="sub">Ejemplo: ventas 90d $600k → cupo $48k. Con $60k vencidos, pierdes todo el revenue del bono.</div>
+  </section>
+
+  <!-- 9 · Ejemplo completo -->
+  <section class="slide">
+    <div class="eyebrow">Ejemplo completo — Sr AM · USA</div>
+    <h2>De las ventas al bono</h2>
+    <div class="flow">
+      <div class="step"><div class="k">Cumplimiento</div><div class="v">100%</div></div>
+      <div class="step"><div class="k">Margen</div><div class="v">30%</div></div>
+      <div class="step"><div class="k">GMC</div><div class="v">$75,000</div></div>
+      <div class="step"><div class="k">Base</div><div class="v">100%</div></div>
+      <div class="step"><div class="k">Multiplicador</div><div class="v">6.2%</div></div>
+      <div class="step res"><div class="k">Bono</div><div class="v">$4,650</div></div>
+    </div>
+    <div class="two-res">
+      <div class="rescard ok"><div class="rl">Cartera $30k (5%) · dentro</div><div class="rv">$4,650</div><div class="rs">Revenue paga completo.</div></div>
+      <div class="rescard bad"><div class="rl">Cartera $60k (10%) · excede</div><div class="rv">$1,860</div><div class="rs">Revenue en 0%: solo cobras rotación y vejez.</div></div>
+    </div>
+  </section>
+
+  <!-- 10 · Reglas de oro -->
+  <section class="slide navy">
+    <div class="eyebrow">Para llevar</div>
+    <h2 style="color:#fff;">Las reglas de oro</h2>
+    <ul class="rules" style="max-width:70ch;">
+      <li><b>Llega al 85%</b> de tu meta: abajo de eso el multiplicador cae a 3%.</li>
+      <li><b>Cuida el margen</b>: mejor margen = más % compartido. Debajo de 18%, bono $0.</li>
+      <li><b>Factura y rota</b> a tiempo: la rotación bonifica; los lotes &gt;150 días castigan.</li>
+      <li><b>No cargues inventario viejo</b>: la vejez solo puede restar.</li>
+      <li><b>Mantén la cartera bajo tu cupo (8%)</b>: si lo excedes, pierdes todo el revenue del bono.</li>
+    </ul>
+    <div class="sub">Simulá tu escenario en la herramienta — cambiá cualquier número y mirá el bono en vivo.</div>
+  </section>
+
+</div>
+
+<div class="logo"><span class="mk">F</span><span class="tx logo-tx-navy" id="logoTx">Forest Coffee</span></div>
+<div class="hint" id="hint">← → o click para navegar</div>
+<div class="dots" id="dots"></div>
+<div class="nav"><span class="ctr" id="ctr">01 / 10</span><button id="prev" aria-label="Anterior">‹</button><button id="next" aria-label="Siguiente">›</button></div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')], N=slides.length;
+let i=0;
+const bar=document.getElementById('bar'), ctr=document.getElementById('ctr'),
+  dots=document.getElementById('dots'), hint=document.getElementById('hint'),
+  logoTx=document.getElementById('logoTx');
+slides.forEach((_,j)=>{ const d=document.createElement('i'); d.addEventListener('click',()=>go(j)); dots.appendChild(d); });
+const dotEls=[...dots.children];
+function go(n){
+  i=Math.max(0,Math.min(N-1,n));
+  slides.forEach((s,j)=>s.classList.toggle('active',j===i));
+  dotEls.forEach((d,j)=>d.classList.toggle('on',j===i));
+  bar.style.width=((i+1)/N*100)+'%';
+  ctr.textContent=String(i+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+  const navy=slides[i].classList.contains('navy');
+  hint.style.color = navy ? 'var(--fc-on3)' : 'var(--fc-ink-300)';
+  ctr.style.color = navy ? 'var(--fc-on3)' : 'var(--fc-ink-300)';
+  logoTx.style.color = navy ? 'var(--fc-on3)' : 'var(--fc-ink-500)';
+}
+document.getElementById('next').addEventListener('click',()=>go(i+1));
+document.getElementById('prev').addEventListener('click',()=>go(i-1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') go(i+1);
+  else if(e.key==='ArrowLeft'||e.key==='PageUp') go(i-1);
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(N-1);
+});
+document.getElementById('deck').addEventListener('click',e=>{
+  if(e.target.closest('.nav')||e.target.closest('.dots')) return;
+  go(i + (e.clientX > window.innerWidth/2 ? 1 : -1));
+});
+go(0);
+</script>
+</body>
+</html>
