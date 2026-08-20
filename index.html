@@ -89,6 +89,8 @@ input[type=range]{width:100%;accent-color:var(--fc-navy);margin-top:2px;}
 .cell{padding:16px 18px;border-right:1px solid var(--fc-ink-100);}
 .cell:last-child{border-right:none;}
 .cell.featured{background:var(--fc-navy);color:#fff;}
+.cell.featured.is-net{background:var(--fc-success);}
+.cell.featured.is-net .cell-value{color:#fff;}
 .cell-label{font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);margin-bottom:8px;}
 .cell.featured .cell-label{color:var(--fc-on-navy-3);}
 .cell-value{font-family:var(--fc-font-mono);font-weight:500;font-size:19px;letter-spacing:var(--fc-ls-tight);color:var(--fc-ink);line-height:1.1;}
@@ -193,6 +195,25 @@ canvas{width:100%;height:210px;margin-top:6px;}
 .lots.margins td,.lots.margins th{text-align:center;}
 .lots.margins td:first-child,.lots.margins th:first-child{text-align:left;}
 .lots.margins .num{font-family:var(--fc-font-mono);font-size:12.5px;color:var(--fc-navy);}
+.tgt-inp{width:74px;padding:5px 7px;font-size:12px;text-align:right;display:inline-block;}
+/* comerciales */
+.coms{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-bottom:16px;}
+.com{background:var(--fc-paper);border:1px solid var(--fc-ink-100);border-radius:var(--fc-radius-3);padding:18px 20px;position:relative;}
+.com-top{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin-bottom:12px;}
+.com-top input.com-name{font-family:var(--fc-font-display);font-weight:700;font-size:14px;color:var(--fc-navy);border:none;border-bottom:1px solid var(--fc-ink-100);padding:4px 2px;border-radius:0;}
+.com-top select{padding:5px 7px;font-size:11px;min-width:70px;}
+.com .rm{position:absolute;top:14px;right:14px;appearance:none;border:1px solid var(--fc-ink-200);background:var(--fc-paper);color:var(--fc-ink-500);border-radius:var(--fc-radius-2);width:24px;height:24px;cursor:pointer;font-size:14px;line-height:1;}
+.com .rm:hover{border-color:var(--fc-danger);color:var(--fc-danger);}
+.com-in{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-bottom:12px;}
+.com-in .mini{margin-bottom:2px;}
+.com-in input{padding:6px 8px;font-size:12px;}
+.com-out{border-top:1px solid var(--fc-ink-100);padding-top:12px;font-size:11.5px;color:var(--fc-ink-500);line-height:1.7;}
+.com-out .row{display:flex;justify-content:space-between;}
+.com-out .row b{font-family:var(--fc-font-mono);font-weight:500;color:var(--fc-navy);}
+.com-neto{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:8px;border-top:1px solid var(--fc-ink-100);}
+.com-neto span{font-family:var(--fc-font-display);font-weight:700;font-size:9px;letter-spacing:var(--fc-ls-eyebrow);text-transform:uppercase;color:var(--fc-ink-500);}
+.com-neto b{font-family:var(--fc-font-display);font-weight:800;font-size:22px;color:var(--fc-success);letter-spacing:var(--fc-ls-tight);}
+.com-ret{font-family:var(--fc-font-mono);font-size:10.5px;padding:2px 8px;border-radius:var(--fc-radius-pill);}
 .lots.status .num{font-family:var(--fc-font-mono);font-size:12.5px;}
 .lots.risk td{vertical-align:middle;}
 .lots.risk input,.lots.risk select{width:100%;padding:6px 8px;font-size:12px;}
@@ -244,6 +265,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
     <button class="tab-btn active" data-tab="sim" role="tab">Simulador</button>
     <button class="tab-btn" data-tab="rv" role="tab">Rotación &amp; Vejez</button>
     <button class="tab-btn" data-tab="status" role="tab">Status equipo</button>
+    <button class="tab-btn" data-tab="comerciales" role="tab">Comerciales</button>
     <button class="tab-btn" data-tab="resumen" role="tab">Resumen modelo</button>
   </div>
 
@@ -316,6 +338,13 @@ canvas{width:100%;height:210px;margin-top:6px;}
       <label>Umbral piso de vejez — k <span class="val" id="vK">33% · X 0</span></label>
       <input type="range" id="kPct" min="10" max="75" value="33" step="1">
       <div class="note">Vejez <b>solo castiga</b>: si la vejez real ≤ meta se paga 100% (no bonifica). Si el inventario disponible &lt; X (= k% del movimiento mensual), la vejez se neutraliza a 100% — no se penaliza el inventario mínimo operativo. Rotación sí acelera ×1.5 por día bajo meta (peso máx 30%).</div>
+
+      <label>Cartera vencida — retención sobre la comisión</label>
+      <div class="two">
+        <div><span class="mini">Ventas últimos 90 días (USD)</span><input type="number" id="ventas90" value="600000" min="0" step="10000"></div>
+        <div><span class="mini">Cartera vencida (USD)</span><input type="number" id="carteraVenc" value="30000" min="0" step="5000"></div>
+      </div>
+      <div class="note">Cupo = 8% de las ventas 90d. % vencido = cartera ÷ ventas 90d. ≤8% ⇒ sin retención · 8–12% ⇒ retiene 50% · &gt;12% ⇒ retiene 100% (hasta que baje del 12%).</div>
     </div>
 
     <div>
@@ -335,6 +364,14 @@ canvas{width:100%;height:210px;margin-top:6px;}
           <div class="side-sub">Modelo anterior: <span class="fc-num" id="bonoO">$0</span></div>
         </div>
       </div>
+
+      <div class="strip" id="carteraStrip" style="margin-bottom:14px;">
+        <div class="cell"><div class="cell-label">Bono bruto (modelo)</div><div class="cell-value" id="caBruto">–</div><div class="cell-sub">antes de cartera</div></div>
+        <div class="cell"><div class="cell-label">% vencido</div><div class="cell-value" id="caPct">–</div><div class="cell-sub" id="caCupo">cupo 8%</div></div>
+        <div class="cell"><div class="cell-label">Retención</div><div class="cell-value" id="caRet">–</div><div class="cell-sub" id="caBand">banda</div></div>
+        <div class="cell featured is-net"><div class="cell-label">Bono NETO a pagar</div><div class="cell-value" id="caNeto">–</div><div class="cell-sub">después de cartera</div></div>
+      </div>
+      <div class="alert critical" id="warnCart"><div class="alert-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="alert-txt" id="warnCartTxt"></div></div>
 
       <div class="strip">
         <div class="cell"><div class="cell-label">Ingresos</div><div class="cell-value" id="cIng">–</div><div class="cell-sub">peso 60% · lineal · &lt;85% ⇒ mult 2.5%</div></div>
@@ -555,6 +592,21 @@ canvas{width:100%;height:210px;margin-top:6px;}
     </div>
   </div>
 
+  <!-- ══════════════════ TAB · COMERCIALES ══════════════════ -->
+  <div class="tabpanel" id="panel-comerciales">
+    <p class="lead">Escenario por comercial: sus ventas, margen y <b>cartera vencida</b> definen el bono neto. Rotación y vejez se toman de los <b>actuales de su región</b> (editables en el tab Rotación &amp; Vejez). El cupo de cartera = 8% de sus ventas de los últimos 90 días.</p>
+
+    <div class="strip" style="margin-bottom:16px;">
+      <div class="cell"><div class="cell-label">Comerciales</div><div class="cell-value" id="coN">–</div><div class="cell-sub">en el escenario</div></div>
+      <div class="cell"><div class="cell-label">Bono bruto total</div><div class="cell-value" id="coBruto">–</div><div class="cell-sub">suma del equipo</div></div>
+      <div class="cell"><div class="cell-label">Retenido por cartera</div><div class="cell-value" id="coRet">–</div><div class="cell-sub">total retenido</div></div>
+      <div class="cell featured is-net"><div class="cell-label">Bono neto total</div><div class="cell-value" id="coNeto">–</div><div class="cell-sub">a pagar</div></div>
+    </div>
+
+    <div class="coms" id="comsGrid"></div>
+    <button class="addrow" id="addCom">+ Agregar comercial</button>
+  </div>
+
   <!-- ══════════════════ TAB 4 · RESUMEN DEL MODELO ══════════════════ -->
   <div class="tabpanel" id="panel-resumen">
     <p class="lead">Resumen del <b>Modelo Spot v2</b>: cómo se arma el bono, la tabla de margen compartido por posición y las reglas de cada componente. Es la referencia para explicarle al equipo.</p>
@@ -611,6 +663,7 @@ canvas{width:100%;height:210px;margin-top:6px;}
         · <b>GMC</b> = ventas reales × margen de contribución.<br>
         · <b>Piso de vejez X</b> = 33% del movimiento mensual de la región; si el inventario disponible &lt; X, la vejez no castiga.<br>
         · <b>Cascada</b> — el bono se paga proporcional a la cartera cobrada.<br>
+        · <b>Retención por cartera vencida</b> — % vencido = cartera vencida ÷ ventas de los últimos 90 días (cupo = 8% de esas ventas): ≤8% sin retención · 8–12% retiene 50% de la comisión · &gt;12% retiene 100% (hasta que baje del 12%).<br>
         · <b>Rotación</b> = ventana móvil de 90 días; <b>vejez</b> = foto al cierre de mes. Ambas en días ponderados por kg (menos = mejor).<br>
         · <b>Targets por región</b> se recalibran cada trimestre con la rotación móvil 90d (ver tab Rotación &amp; Vejez).
       </div>
@@ -672,6 +725,13 @@ function ingNew(c){
 function compRot(m,r){ if(m<=0||r<=0) return 0; return r>=m ? m/r : Math.min(1+(m-r)/m*1.5, 1.5); }
 // Vejez: solo castiga — mejor o igual a meta = 100%; inventario < X = 100%; peor = meta/real
 function compVej(m,r,inv,X){ if(X>0 && inv>=0 && inv<X) return 1; if(m<=0||r<=0) return 0; return r<=m ? 1 : m/r; }
+// Retención de cartera vencida sobre la comisión (% vencido = cartera ÷ ventas 90d)
+// ≤8% ⇒ retiene 0 · (8%,12%] ⇒ 50% · >12% ⇒ 100%
+function carteraRet(ventas90, cartera){
+  if(ventas90<=0) return {pct:0, ret:0, cupo:0};
+  const pct=cartera/ventas90;
+  return {pct, cupo:0.08*ventas90, ret: pct<=0.08 ? 0 : (pct<=0.12 ? 0.5 : 1)};
+}
 
 const $=id=>document.getElementById(id);
 const fmt$=v=>'$'+Math.round(v).toLocaleString('en-US');
@@ -775,6 +835,18 @@ function update(){
   $('delta').textContent=(d>=0?'+':'−')+fmt$(Math.abs(d)).slice(0);
   sc.classList.toggle('is-ok', d>=0);
   sc.classList.toggle('is-crit', d<0);
+
+  // ── Retención de cartera vencida ──
+  const ventas90=+$('ventas90').value||0, carteraV=+$('carteraVenc').value||0;
+  const cc=carteraRet(ventas90, carteraV), bonoNeto=bonoN*(1-cc.ret);
+  $('caBruto').textContent=fmt$(bonoN);
+  $('caPct').textContent=fmtP(cc.pct,1);
+  $('caCupo').textContent='cupo 8% = '+fmt$(cc.cupo);
+  $('caRet').textContent=fmtP(cc.ret,0);
+  $('caBand').textContent = cc.ret===0?'≤8% · sin retención' : (cc.ret===0.5?'8–12% · retiene 50%':'>12% · retiene 100%');
+  $('caNeto').textContent=fmt$(bonoNeto);
+  if(cc.ret>0){ $('warnCart').style.display='flex'; $('warnCartTxt').textContent='Cartera vencida '+fmtP(cc.pct,1)+' (> 8%): se retiene '+fmtP(cc.ret,0)+' de la comisión. Bono neto '+fmt$(bonoNeto)+'.'; }
+  else $('warnCart').style.display='none';
 
   $('warnMg').style.display = mg<MMIN?'flex':'none';
   $('warnAp').style.display = (mg>=MMIN && cum<FT)?'flex':'none';
@@ -929,8 +1001,10 @@ function renderTargets(){
     const R=REGIONES[key], X=Math.round(R.movMensualKg*k);
     const tr=document.createElement('tr');
     if(key===active) tr.className='is-rot';
-    tr.innerHTML='<td><b>'+R.label+'</b></td><td>'+R.rot3M+'</td><td>'+R.rot6M+'</td><td>'+R.vejMeta+
-      '</td><td>'+fmtKg(R.movMensualKg)+'</td><td>'+fmtKg(X)+'</td>';
+    const inp=(f,v,st)=>'<input type="number" class="tgt-inp" data-reg="'+key+'" data-f="'+f+'" value="'+v+'" min="0" step="'+(st||1)+'">';
+    tr.innerHTML='<td><b>'+R.label+'</b></td>'+
+      '<td>'+inp('rot3M',R.rot3M)+'</td><td>'+inp('rot6M',R.rot6M)+'</td><td>'+inp('vejMeta',R.vejMeta)+'</td>'+
+      '<td>'+inp('movMensualKg',R.movMensualKg,1000)+'</td><td class="num tgt-x">'+fmtKg(X)+'</td>';
     b.appendChild(tr);
   });
 }
@@ -1033,6 +1107,66 @@ function renderStatus(){
   });
 }
 
+// ── Comerciales (escenarios por persona) ─────────────────────
+const COMS=[
+  {nombre:'Juan David',   pos:1, region:'USA', revMeta:250000, revReal:240000, mg:28, ventas90:640000, cartera:38000},
+  {nombre:'Comercial EU', pos:1, region:'EU',  revMeta:120000, revReal:130000, mg:30, ventas90:290000, cartera:18000},
+  {nombre:'Comercial UK', pos:0, region:'UK',  revMeta:60000,  revReal:52000,  mg:26, ventas90:78000,  cartera:12000}
+];
+function comMetrics(c){
+  const R=REGIONES[c.region]||REGIONES.USA;
+  const cum=c.revMeta>0?c.revReal/c.revMeta:0, mg=(c.mg||0)/100, gmc=c.revReal*mg;
+  const rot=compRot(R.rot3M,R.rotHoy);
+  const k=(+($('kPct').value||33))/100, vej=compVej(R.vejMeta,R.vejHoy,R.invSpotKg,R.movMensualKg*k);
+  const base=ingNew(cum)+rot*PR+vej*PV, subMult=(+$('subMult').value||0)/100;
+  const mult = mg<MMIN ? 0 : (cum<FT ? subMult : multNew(mg,c.pos));
+  const bruto=gmc*base*mult, cc=carteraRet(c.ventas90,c.cartera), neto=bruto*(1-cc.ret);
+  return {cum,gmc,rot,vej,base,mult,bruto,cc,neto};
+}
+function comOutHTML(r){
+  const band=r.cc.ret===0?'st-ok':(r.cc.ret===0.5?'st-warn':'st-bad');
+  const bt=r.cc.ret===0?'sin retención':(r.cc.ret===0.5?'retiene 50%':'retiene 100%');
+  return '<div class="row"><span>Cumplimiento · GMC</span><b>'+fmtP(r.cum,0)+' · '+fmt$(r.gmc)+'</b></div>'+
+    '<div class="row"><span>Base · Mult</span><b>'+fmtP(r.base)+' · '+fmtP(r.mult,2)+'</b></div>'+
+    '<div class="row"><span>Bono bruto</span><b>'+fmt$(r.bruto)+'</b></div>'+
+    '<div class="row"><span>Cartera '+fmtP(r.cc.pct,1)+' (cupo '+fmt$(r.cc.cupo)+')</span><span class="com-ret '+band+'">'+bt+'</span></div>';
+}
+function renderComs(){
+  const g=$('comsGrid'); if(!g) return; g.innerHTML='';
+  COMS.forEach((c,i)=>{
+    const r=comMetrics(c);
+    const regOpts=Object.keys(REGIONES).map(k=>'<option value="'+k+'"'+(k===c.region?' selected':'')+'>'+k+'</option>').join('');
+    const posOpts=POS.map((p,j)=>'<option value="'+j+'"'+(j===c.pos?' selected':'')+'>'+p+'</option>').join('');
+    const nI=(f,v,st)=>'<input type="number" data-i="'+i+'" data-f="'+f+'" value="'+v+'" min="0" step="'+(st||1)+'">';
+    const d=document.createElement('div'); d.className='com';
+    d.innerHTML='<button class="rm" data-i="'+i+'" title="Quitar">×</button>'+
+      '<div class="com-top"><input class="com-name" data-i="'+i+'" data-f="nombre" value="'+c.nombre+'">'+
+        '<select data-i="'+i+'" data-f="pos">'+posOpts+'</select><select data-i="'+i+'" data-f="region">'+regOpts+'</select></div>'+
+      '<div class="com-in">'+
+        '<div><span class="mini">Ventas meta</span>'+nI('revMeta',c.revMeta,10000)+'</div>'+
+        '<div><span class="mini">Ventas reales</span>'+nI('revReal',c.revReal,10000)+'</div>'+
+        '<div><span class="mini">Margen %</span>'+nI('mg',c.mg,0.5)+'</div>'+
+        '<div><span class="mini">Ventas 90d</span>'+nI('ventas90',c.ventas90,10000)+'</div>'+
+        '<div style="grid-column:1/-1"><span class="mini">Cartera vencida</span>'+nI('cartera',c.cartera,5000)+'</div>'+
+      '</div>'+
+      '<div class="com-out" id="comOut-'+i+'">'+comOutHTML(r)+'</div>'+
+      '<div class="com-neto" id="comNeto-'+i+'"><span>Bono neto</span><b>'+fmt$(r.neto)+'</b></div>';
+    g.appendChild(d);
+  });
+  refreshComTotals();
+}
+function refreshCom(i){
+  const r=comMetrics(COMS[i]);
+  const o=$('comOut-'+i); if(o) o.innerHTML=comOutHTML(r);
+  const n=$('comNeto-'+i); if(n) n.innerHTML='<span>Bono neto</span><b>'+fmt$(r.neto)+'</b>';
+  refreshComTotals();
+}
+function refreshComTotals(){
+  let tB=0,tN=0; COMS.forEach(c=>{const r=comMetrics(c);tB+=r.bruto;tN+=r.neto;});
+  if($('coN')){ $('coN').textContent=COMS.length; $('coBruto').textContent=fmt$(tB);
+    $('coRet').textContent=fmt$(tB-tN); $('coNeto').textContent=fmt$(tN); }
+}
+
 function recalc(){ update(); calc2(); renderTargets(); }
 
 /* sincronización de inputs compartidos entre tabs */
@@ -1064,11 +1198,24 @@ $('sendToSim').addEventListener('click',()=>{
 });
 
 /* listeners */
-['pos','revMeta','revReal','subMult','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct'].forEach(id=>{
+['pos','revMeta','revReal','subMult','mg','rotMeta','rotReal','lotes','vejMeta','vejReal','invDisp','movMensual','kPct','ventas90','carteraVenc'].forEach(id=>{
   $(id).addEventListener('input',recalc);
 });
 $('region').addEventListener('change',()=>{ applyRegion(true); recalc(); });
 $('horizonte').addEventListener('change',()=>{ applyRegion(false); recalc(); });
+$('tgtBody').addEventListener('input',e=>{            // targets editables por región
+  const el=e.target; if(!el.classList.contains('tgt-inp')) return;
+  const reg=el.dataset.reg, f=el.dataset.f, R=REGIONES[reg];
+  R[f]=+el.value||0;
+  const k=(+($('kPct').value||33))/100;
+  el.closest('tr').querySelector('.tgt-x').textContent=fmtKg(Math.round(R.movMensualKg*k));
+  if($('region').value===reg){          // reflejar en el simulador sin reconstruir la tabla
+    setPair('rotMeta','rotMeta2', rotTargetFor(reg,$('horizonte').value));
+    setPair('vejMeta','vejMeta2', R.vejMeta);
+    setPair('movMensual','movMensual2', R.movMensualKg);
+  }
+  update(); calc2(); renderStatus(); renderComs();
+});
 window.addEventListener('resize',()=>{ if(S&&S.p!=null) draw(S.p,S.mg); renderStatus(); });
 $('lotBody').addEventListener('input',calc2);
 $('lotBody').addEventListener('click',e=>{
@@ -1088,10 +1235,22 @@ syncPair('vejMeta','vejMeta2');
 $('stepPrev').addEventListener('click',()=>{ if(stepI>0){stepI--;renderStep();} });
 $('stepNext').addEventListener('click',()=>{ if(stepI<STEPS.length-1){stepI++;renderStep();} });
 
+function comEdit(e){
+  const el=e.target, i=el.dataset.i, f=el.dataset.f;
+  if(i==null||!f) return;
+  COMS[i][f] = (f==='nombre'||f==='region') ? el.value : (+el.value||0);
+  if(f!=='nombre') refreshCom(i);
+}
+$('comsGrid').addEventListener('input',comEdit);
+$('comsGrid').addEventListener('change',comEdit);
+$('comsGrid').addEventListener('click',e=>{ if(e.target.classList.contains('rm')){ COMS.splice(+e.target.dataset.i,1); renderComs(); } });
+$('addCom').addEventListener('click',()=>{ COMS.push({nombre:'Nuevo',pos:1,region:'USA',revMeta:250000,revReal:250000,mg:28,ventas90:600000,cartera:20000}); renderComs(); });
+
 renderLots();
 renderStatus();
 renderStep();
 renderMargins();
+renderComs();
 applyRegion(true);   // carga USA (target 3M) al abrir
 recalc();
 </script>
