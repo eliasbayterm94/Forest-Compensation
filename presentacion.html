@@ -101,6 +101,27 @@ table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(
 .lt small{font-size:.72em;opacity:.85;}
 .lot-eq{font-family:var(--fc-fm);font-size:clamp(11px,1.15vw,15px);color:var(--fc-ink-500);}
 .lot-eq b{color:var(--fc-navy);font-size:1.25em;}
+/* day-chart: largo = días, con meta y kg por lote */
+.dc{margin:1.4vh 0 .6vh;}
+.dc-plot{position:relative;padding-top:26px;padding-bottom:22px;}
+.dc-row{height:clamp(30px,4.4vh,36px);margin-bottom:8px;display:flex;}
+.dc-row:last-child{margin-bottom:0;}
+.dc-bar{height:100%;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:0 11px;color:#fff;font-family:var(--fc-fm);font-size:clamp(11px,1.1vw,15px);white-space:nowrap;min-width:76px;}
+.dc-bar .kg{font-size:.78em;opacity:.85;font-weight:400;} .dc-bar b{font-weight:600;}
+.dc-bar.ok{background:var(--fc-success);} .dc-bar.warn{background:var(--fc-warning);} .dc-bar.over{background:var(--fc-danger);}
+.dc-line{position:absolute;top:8px;bottom:22px;width:2px;z-index:5;}
+.dc-line.meta{background:var(--fc-navy);} .dc-line.crit{background:var(--fc-danger);}
+.dc-line span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:var(--fc-fd);font-weight:700;
+  font-size:clamp(8px,.92vw,11px);letter-spacing:var(--fc-lsl);text-transform:uppercase;white-space:nowrap;}
+.dc-line.meta span{color:var(--fc-navy);} .dc-line.crit span{color:var(--fc-danger);}
+.dc-axis{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--fc-ink-200);height:18px;}
+.dc-axis span{position:absolute;top:3px;font-family:var(--fc-fm);font-size:clamp(9px,.9vw,12px);color:var(--fc-ink-300);}
+.dc-axis .l{left:0;} .dc-axis .r{right:0;}
+.dc-cap{font-family:var(--fc-fm);font-size:clamp(11px,1.1vw,14px);color:var(--fc-ink-500);margin-top:.6vh;line-height:1.4;}
+.dc-cap b{color:var(--fc-navy);font-size:1.12em;}
+.dc.mini .dc-plot{padding:0;} .dc.mini .dc-row{height:24px;margin-bottom:5px;}
+.dc.mini .dc-bar{font-size:clamp(9px,.95vw,12px);min-width:56px;padding:0 8px;border-radius:0 5px 5px 0;}
 
 /* progress bar (revenue) */
 .prog{position:relative;height:clamp(30px,4.5vh,40px);background:var(--fc-ink-100);border-radius:8px;overflow:hidden;margin:1.4vh 0 .6vh;}
@@ -299,12 +320,14 @@ table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(
         <div class="q down">Qué la castiga</div><div class="a">Cada lote <b>disponible &gt;150 días</b> suma +2 días a tu rotación.</div>
       </div>
       <div>
-        <div class="eyebrow" style="margin-bottom:.4vh;">Ponderado por kilos</div>
-        <div class="lotbar">
-          <div class="lt a" style="width:50%">50<small>d · 20t</small></div>
-          <div class="lt b" style="width:50%">70<small>d · 20t</small></div>
-        </div>
-        <div class="lot-eq">(20t×50 + 20t×70) ÷ 40t = <b>60 días</b></div>
+        <div class="eyebrow" style="margin-bottom:.4vh;">Cada lote: el largo = sus días · la etiqueta = sus kilos</div>
+        <div class="dc"><div class="dc-plot">
+          <div class="dc-line meta" style="left:50%"><span>meta 60d</span></div>
+          <div class="dc-row"><div class="dc-bar ok"   style="width:45.8%"><span class="kg">30t</span><b>55d</b></div></div>
+          <div class="dc-row"><div class="dc-bar over" style="width:62.5%"><span class="kg">10t</span><b>75d</b></div></div>
+          <div class="dc-axis"><span class="l">0</span><span class="r">120d</span></div>
+        </div></div>
+        <div class="dc-cap">(30t×55 + 10t×75) ÷ 40t = <b>60 días</b>. El lote grande pesa más y jala el promedio hacia sus 55d.</div>
       </div>
     </div>
     <div class="sub"><b>Target compañía: 60 días.</b> Sigue siendo la meta de referencia, pero se ajusta <b>progresivamente por región</b> según su estado actual (ver Status): las regiones más rezagadas parten de un target más alto y bajan por trimestre.</div>
@@ -321,13 +344,15 @@ table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(
         <div class="q down">Qué la castiga</div><div class="a">Cargar inventario viejo. Bajo el piso <b>X</b> (mín. operativo) no castiga.</div>
       </div>
       <div>
-        <div class="eyebrow" style="margin-bottom:.4vh;">Solo el inventario disponible</div>
-        <div class="lotbar">
-          <div class="lt a" style="width:50%">40<small>d · 10t</small></div>
-          <div class="lt c" style="width:35%">60<small>d · 7t</small></div>
-          <div class="lt d" style="width:15%">160<small>d · 3t</small></div>
-        </div>
-        <div class="lot-eq">El lote de <b>160d</b> también suma +2d a tu rotación.</div>
+        <div class="eyebrow" style="margin-bottom:.4vh;">Solo el inventario disponible · largo = días en bodega</div>
+        <div class="dc"><div class="dc-plot">
+          <div class="dc-line crit" style="left:83.3%"><span>150d crítico</span></div>
+          <div class="dc-row"><div class="dc-bar ok"   style="width:22.2%"><span class="kg">10t</span><b>40d</b></div></div>
+          <div class="dc-row"><div class="dc-bar ok"   style="width:33.3%"><span class="kg">7t</span><b>60d</b></div></div>
+          <div class="dc-row"><div class="dc-bar over" style="width:88.9%"><span class="kg">3t</span><b>160d</b></div></div>
+          <div class="dc-axis"><span class="l">0</span><span class="r">180d</span></div>
+        </div></div>
+        <div class="dc-cap">El lote de <b>160d</b> pasa la línea crítica: envejece y suma +2d a tu rotación.</div>
       </div>
     </div>
     <div class="sub"><b>Reservas:</b> un lote reservado no cuenta ni en rotación ni en vejez — pero paga Finance &amp; Storage. Igual toca rotarlo, y si la reserva se cae, vuelve a contar.</div>
@@ -369,17 +394,19 @@ table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(
       </div>
       <div class="metric">
         <div class="mh"><span class="mt">Rotación</span><span class="mv">60d</span></div>
-        <div class="lotbar" style="height:36px;margin:.8vh 0 .5vh;">
-          <div class="lt a" style="width:50%">50d</div><div class="lt b" style="width:50%">70d</div>
-        </div>
-        <div class="mf">Σ(kg × días) ÷ Σkg · en meta → 100%</div>
+        <div class="dc mini" style="margin:1vh 0 .5vh;"><div class="dc-plot">
+          <div class="dc-row"><div class="dc-bar ok"   style="width:46%"><span class="kg">30t</span><b>55d</b></div></div>
+          <div class="dc-row"><div class="dc-bar over" style="width:63%"><span class="kg">10t</span><b>75d</b></div></div>
+        </div></div>
+        <div class="mf">Σ(kg × días) ÷ Σkg = 60d · en meta → 100%</div>
       </div>
       <div class="metric">
         <div class="mh"><span class="mt">Vejez</span><span class="mv">45d</span></div>
-        <div class="lotbar" style="height:36px;margin:.8vh 0 .5vh;">
-          <div class="lt a" style="width:50%">40d</div><div class="lt b" style="width:50%">50d</div>
-        </div>
-        <div class="mf">edad del disponible · en meta → 100%</div>
+        <div class="dc mini" style="margin:1vh 0 .5vh;"><div class="dc-plot">
+          <div class="dc-row"><div class="dc-bar ok" style="width:33%"><span class="kg">10t</span><b>40d</b></div></div>
+          <div class="dc-row"><div class="dc-bar ok" style="width:42%"><span class="kg">10t</span><b>50d</b></div></div>
+        </div></div>
+        <div class="mf">edad del disponible = 45d · en meta → 100%</div>
       </div>
     </div>
     <div class="sub">Todo <b>ponderado por kilos</b>: un lote grande pesa lo que debe pesar. Estos cuatro números arman la base.</div>
