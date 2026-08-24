@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forest Coffee — Modelo Spot v2 · One-pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fc-yellow:#e7e244; --fc-navy:#1b203d; --fc-navy-dark:#0f1226; --fc-ink:#0c0c0b; --fc-cream:#f5f4ee;
+  --fc-yellow-600:#c9c422; --fc-blue-100:#e6eef5; --fc-blue-200:#c7d8e6; --fc-blue-700:#5b85a3;
+  --fc-ink-100:#e8e8e2; --fc-ink-200:#c9c9c2; --fc-ink-300:#9a9a93; --fc-ink-500:#5a5a55;
+  --fc-success:#4d7c2f; --fc-warning:#c47820; --fc-danger:#a8351c;
+  --fc-fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --fc-fb:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --fc-fm:"DM Mono",ui-monospace,Menlo,monospace;
+  --fc-lse:0.28em; --fc-lst:-0.01em; --fc-lsl:0.03em;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fc-fb);background:var(--fc-cream);color:var(--fc-ink);-webkit-font-smoothing:antialiased;padding:24px 16px;}
+.sheet{max-width:1000px;margin:0 auto;background:#fff;border:1px solid var(--fc-ink-100);border-radius:12px;
+  padding:26px 30px 30px;box-shadow:0 4px 18px rgba(12,12,11,.06);}
+
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px;}
+.eyebrow{font-family:var(--fc-fb);font-weight:600;font-size:9.5px;letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);}
+h1{font-family:var(--fc-fd);font-weight:800;font-size:26px;line-height:1;letter-spacing:var(--fc-lst);text-transform:uppercase;color:var(--fc-navy);margin-top:4px;}
+h1 .hl{color:var(--fc-yellow-600);}
+.logo{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.logo .mk{width:30px;height:30px;background:var(--fc-yellow);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:var(--fc-fd);font-weight:900;font-size:15px;color:var(--fc-navy-dark);}
+.logo .tx{font-family:var(--fc-fd);font-weight:700;font-size:9.5px;letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);}
+.printbtn{appearance:none;border:none;background:var(--fc-navy);color:#fff;font-family:var(--fc-fd);font-weight:700;font-size:9px;
+  letter-spacing:var(--fc-lse);text-transform:uppercase;padding:9px 14px;border-radius:6px;cursor:pointer;}
+.printbtn:hover{background:var(--fc-navy-dark);}
+
+/* transition banner */
+.banner{background:var(--fc-navy);color:#fff;border-radius:10px;padding:13px 16px;display:flex;gap:13px;align-items:flex-start;margin-bottom:18px;position:relative;overflow:hidden;}
+.banner::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle at top right,rgba(231,226,68,.14),transparent 70%);}
+.banner .bi{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--fc-yellow);color:var(--fc-navy);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;}
+.banner .bt{font-family:var(--fc-fd);font-weight:700;font-size:11px;letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-yellow);margin-bottom:3px;}
+.banner .bd{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);}
+.banner .bd b{color:#fff;font-weight:700;}
+
+/* formula strip */
+.fstrip{background:var(--fc-cream);border:1px solid var(--fc-ink-100);border-radius:10px;padding:12px 16px;margin-bottom:16px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;}
+.fstrip .eq{font-family:var(--fc-fd);font-weight:800;font-size:18px;color:var(--fc-navy);letter-spacing:var(--fc-lst);}
+.fstrip .eq .op{color:var(--fc-ink-300);} .fstrip .eq .y{color:var(--fc-yellow-600);}
+.fstrip .note{font-size:11px;color:var(--fc-ink-500);font-family:var(--fc-fm);}
+.fstrip .note b{color:var(--fc-navy);}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:720px){.grid{grid-template-columns:1fr;}}
+.card{border:1px solid var(--fc-ink-100);border-radius:10px;padding:13px 15px;}
+.card.span{grid-column:1/-1;}
+.card-h{font-family:var(--fc-fd);font-weight:700;font-size:10px;letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-navy);margin-bottom:9px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.card-h .w{font-family:var(--fc-fm);font-size:10px;color:var(--fc-ink-300);letter-spacing:0;text-transform:none;}
+ul.cl{list-style:none;}
+ul.cl li{font-size:12px;line-height:1.5;color:var(--fc-ink-500);padding:3px 0 3px 14px;position:relative;}
+ul.cl li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:2px;background:var(--fc-yellow-600);}
+ul.cl li.up::before{background:var(--fc-success);} ul.cl li.down::before{background:var(--fc-danger);}
+ul.cl li b{color:var(--fc-navy);font-weight:600;} .mono{font-family:var(--fc-fm);}
+
+/* margin table */
+table.mg{border-collapse:collapse;width:100%;font-size:11.5px;}
+table.mg th,table.mg td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--fc-ink-100);white-space:nowrap;}
+table.mg th{font-family:var(--fc-fd);font-weight:700;font-size:8.5px;letter-spacing:var(--fc-lse);text-transform:uppercase;color:var(--fc-ink-500);}
+table.mg td{font-family:var(--fc-fm);color:var(--fc-navy);}
+table.mg td:first-child,table.mg th:first-child{text-align:left;font-family:var(--fc-fd);font-weight:700;font-size:10.5px;}
+table.mg tr:last-child td{border-bottom:none;}
+
+.cartera-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;}
+.cbox{border-radius:8px;padding:9px 11px;font-size:11.5px;line-height:1.4;}
+.cbox.ok{background:rgba(77,124,47,.10);border:1px solid rgba(77,124,47,.28);}
+.cbox.bad{background:rgba(168,53,28,.09);border:1px solid rgba(168,53,28,.26);}
+.cbox .ct{font-family:var(--fc-fd);font-weight:700;font-size:9px;letter-spacing:var(--fc-lse);text-transform:uppercase;margin-bottom:3px;}
+.cbox.ok .ct{color:var(--fc-success);} .cbox.bad .ct{color:var(--fc-danger);}
+.cbox b{color:var(--fc-navy);}
+
+.foot{margin-top:16px;font-size:10px;color:var(--fc-ink-300);font-family:var(--fc-fm);text-align:center;letter-spacing:var(--fc-lsl);}
+
+@media print{
+  body{background:#fff;padding:0;}
+  .sheet{box-shadow:none;border:none;border-radius:0;max-width:none;padding:0;}
+  .noprint{display:none!important;}
+  @page{size:A4;margin:11mm;}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .card,.banner,.fstrip{break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="top">
+    <div>
+      <div class="eyebrow">Forest Coffee · Compensación Comercial · 2026</div>
+      <h1>Modelo de compensación <span class="hl">Spot v2</span> — Condiciones</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="printbtn noprint" onclick="window.print()">Imprimir / PDF</button>
+      <div class="logo"><span class="mk">F</span><span class="tx">Forest Coffee</span></div>
+    </div>
+  </div>
+
+  <div class="banner">
+    <div class="bi">⏳</div>
+    <div>
+      <div class="bt">Transición hasta el cierre de octubre 2026</div>
+      <div class="bd"><b>Rotación, vejez y cartera empiezan a contar en el cierre de octubre.</b> De aquí a ese mes es un periodo de transición para hacer los ajustes necesarios: durante la transición, <b>rotación y vejez se cuentan al 100% de cumplimiento</b> (no penalizan). Revenue y margen aplican normal desde ya.</div>
+    </div>
+  </div>
+
+  <div class="fstrip">
+    <div class="eq">Bono <span class="op">=</span> GMC <span class="op">×</span> Base <span class="op">×</span> <span class="y">Multiplicador</span></div>
+    <div class="note"><b>GMC</b> = ventas reales × margen · <b>Base</b> = Revenue 60% + Rotación 20% + Vejez 20%</div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-h"><span>Revenue</span><span class="w">peso 60%</span></div>
+      <ul class="cl">
+        <li><b>Lineal</b> y proporcional al cumplimiento (sin apertura).</li>
+        <li class="up">Acelerador <b>×2</b> entre 100% y 150%; sobre 150% cuenta ×1.</li>
+        <li class="down">Cumplimiento <b>&lt; 85%</b> ⇒ el multiplicador baja a <b>3% fijo</b>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span>Multiplicador — margen compartido (% del GMC)</span></div>
+      <table class="mg">
+        <thead><tr><th>Margen</th><th>Jr</th><th>Sr</th><th>Reg.</th><th>Glob.</th></tr></thead>
+        <tbody>
+          <tr><td>18–25.9%</td><td>4.8</td><td>5.2</td><td>5.4</td><td>5.6</td></tr>
+          <tr><td>26–30.9%</td><td>5.8</td><td>6.2</td><td>6.4</td><td>6.6</td></tr>
+          <tr><td>31–35.9%</td><td>7.8</td><td>8.2</td><td>8.4</td><td>8.6</td></tr>
+          <tr><td>36–40.9%</td><td>8.8</td><td>9.2</td><td>9.4</td><td>9.6</td></tr>
+          <tr><td>41–45.9%</td><td>10.8</td><td>11.2</td><td>11.4</td><td>11.6</td></tr>
+          <tr><td>46%+</td><td>11.8</td><td>12.2</td><td>12.4</td><td>12.6</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span>Rotación</span><span class="w">peso 20% · hasta 30%</span></div>
+      <ul class="cl">
+        <li>Días promedio <b>ponderados por kg</b> desde que se factura, últimos <b>90 días</b>. Menos = mejor.</li>
+        <li class="up">Peor que meta ⇒ <span class="mono">meta ÷ real</span>. Mejor ⇒ <b>acelera ×1.5</b> (bonifica).</li>
+        <li class="down">Cada lote <b>disponible &gt;150 días</b> suma +2 días a la rotación.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span>Vejez</span><span class="w">peso 20% · solo castiga</span></div>
+      <ul class="cl">
+        <li>Edad del inventario <b>disponible</b> al cierre (ponderada por kg).</li>
+        <li class="up">En meta o mejor ⇒ <b>100%</b> (no bonifica). Peor ⇒ <span class="mono">meta ÷ real</span>.</li>
+        <li>Inventario disponible &lt; piso <b>X</b> (= 8% del movimiento) ⇒ <b>100%</b>.</li>
+      </ul>
+    </div>
+
+    <div class="card span">
+      <div class="card-h"><span>Cartera vencida — condición sobre el revenue</span></div>
+      <div style="font-size:12px;color:var(--fc-ink-500);line-height:1.5;">Cupo = <b class="mono" style="color:var(--fc-navy)">8%</b> de las ventas de los últimos 90 días (número concreto en $ por comercial). % vencido = cartera vencida ÷ ventas 90d.</div>
+      <div class="cartera-row">
+        <div class="cbox ok"><div class="ct">Cartera ≤ cupo (≤8%)</div>El componente de <b>revenue paga 100%</b>.</div>
+        <div class="cbox bad"><div class="ct">Cartera &gt; cupo</div>El componente de <b>revenue (60%) se paga 0%</b>. Rotación y vejez no se afectan.</div>
+      </div>
+    </div>
+
+    <div class="card span">
+      <div class="card-h"><span>Condiciones generales</span></div>
+      <ul class="cl" style="columns:2;column-gap:26px;">
+        <li><b>Margen &lt; 18%</b> ⇒ bono $0.</li>
+        <li>Multiplicador = <b>escalón</b> por bracket (no se suaviza).</li>
+        <li><b>Reservas:</b> un lote reservado no cuenta en rotación ni vejez, pero paga Finance &amp; Storage; si la reserva se cae, vuelve a contar.</li>
+        <li>Rotación = ventana móvil 90d · Vejez = foto al cierre de mes.</li>
+        <li><b>Cascada:</b> el pago es proporcional a la cartera cobrada.</li>
+        <li>Targets de rotación/vejez por región, recalibrados cada trimestre.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="foot">Forest Coffee · Modelo Spot v2 · Documento de referencia — sujeto a la política de compensación vigente.</div>
+</div>
+</body>
+</html>
